@@ -1,0 +1,14 @@
+.DS_STORE
+.vscode
+.idea
+.env
+instance/
+.webassets-cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+
+dist/
+venv/
+build/
