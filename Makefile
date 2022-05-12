@@ -17,7 +17,3 @@ minor_version_up:
 
 setup_pip:
 	pip config set global.index-url https://aws:"`aws codeartifact get-authorization-token --domain ${DOMAIN_NAME} --domain-owner ${DOMAIN_OWNER} --query authorizationToken --output text`"@${DOMAIN_NAME}-${DOMAIN_OWNER}.d.codeartifact.${AWS_REGION}.amazonaws.com/pypi/pypi-store/simple/
-
-test:
-	cd tests
-	python3 -m unittest

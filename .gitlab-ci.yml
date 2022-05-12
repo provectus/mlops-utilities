@@ -11,7 +11,8 @@ stages:
 test:
   stage: test
   script:
-    - make test
+    - cd tests
+    - python3 -m unittest
 
 build-package:
   stage: deploy
