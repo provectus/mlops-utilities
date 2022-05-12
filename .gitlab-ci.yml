@@ -1,5 +1,5 @@
 image:
-  name: amazon/aws-cli:2.2.18
+  name: amazon/aws-sam-cli-build-image-python3.8
   entrypoint: [""]
 
 services:
