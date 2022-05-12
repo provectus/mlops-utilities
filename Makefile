@@ -1,7 +1,7 @@
 minor_version_up:
 	git config --global user.email ${GITLAB_USER_EMAIL}
 	git config --global user.name ${GITLAB_USER_NAME}
-	git remote set-url origin https://oauth2:${GITLAB_TOKEN}@gitlab.com/${CI_PROJECT_PATH}.git
+	git remote set-url origin https://oauth2:${GITLAB_TOKEN}@gitlab.provectus.com/${CI_PROJECT_PATH}.git
 	# tag release version
 	git tag `cat version`
 	# increment version
