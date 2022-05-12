@@ -31,7 +31,7 @@ build-package:
     - pip3 install twine
     - make minor_version_up
     - export PACKAGE_VERSION=`cat version` && python3 setup.py bdist_wheel
-    - twine upload --repository codeartifact dist/mlops-"`cat version`"-py3-none-any.whl
+    - twine upload --repository codeartifact dist/mlops_utilities-"`cat version`"-py3-none-any.whl
   when: manual
   only:
     - dev
