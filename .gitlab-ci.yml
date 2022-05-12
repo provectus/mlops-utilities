@@ -19,7 +19,7 @@ test:
   stage: test
   script:
     - make setup_pip
-    - pip3 install mlops-utilities
+    - python3 -m pip install mlops-utilities
     - cd tests/
     - python3 -m unittest
 #  needs:
