@@ -25,6 +25,9 @@ test:
   needs:
     - job: build-package
       optional: true
+  only:
+    # TODO master
+    - dev
 
 build-package:
   stage: deploy
@@ -36,4 +39,5 @@ build-package:
     - twine upload --repository codeartifact dist/mlops_utilities-"`cat version`"-py3-none-any.whl
   when: manual
   only:
+    # TODO master
     - dev
