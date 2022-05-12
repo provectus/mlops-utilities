@@ -1,5 +1,5 @@
 image:
-  name: python:3.8
+  name: amazon/aws-cli:2.2.18
   entrypoint: [""]
 
 services:
