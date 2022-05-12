@@ -1,3 +1,10 @@
+image:
+  name: python:3.8
+  entrypoint: [""]
+
+services:
+  - docker:20.10.7-dind
+
 variables:
   AWS_DEFAULT_REGION: us-east-1
   DOCKER_HOST: tcp://docker:2375
@@ -11,7 +18,7 @@ stages:
 test:
   stage: test
   script:
-    - cd tests
+    - cd tests/
     - python3 -m unittest
 
 build-package:
