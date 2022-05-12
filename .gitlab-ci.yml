@@ -12,17 +12,18 @@ variables:
   DOCKER_TLS_CERTDIR: ""
 
 stages:
-  - deploy
+  # - deploy
   - test
 
 test:
   stage: test
   script:
+    - make setup_pip
     - cd tests/
     - python3 -m unittest
-  needs:
-    - job: build-package
-      optional: true
+#  needs:
+#    - job: build-package
+#      optional: true
 
 build-package:
   stage: deploy

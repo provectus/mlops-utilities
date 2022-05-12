@@ -16,4 +16,4 @@ minor_version_up:
 	git push --tags
 
 setup_pip:
-	pip config set global.index-url https://aws:"`aws codeartifact get-authorization-token --domain ${DOMAIN_NAME} --domain-owner ${DOMAIN_OWNER} --query authorizationToken --output text`"@${DOMAIN_NAME}-${DOMAIN_OWNER}.d.codeartifact.${AWS_DEFAULT_REGION}.amazonaws.com/pypi/pypi-store/simple/
+	pip3 config set global.index-url https://aws:"`aws codeartifact get-authorization-token --domain ${CA_DOMAIN_NAME} --domain-owner ${CA_DOMAIN_OWNER} --query authorizationToken --output text`"@${CA_DOMAIN_NAME}-${CA_DOMAIN_OWNER}.d.codeartifact.${AWS_DEFAULT_REGION}.amazonaws.com/pypi/pypi-store/simple/
