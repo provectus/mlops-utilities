@@ -18,9 +18,8 @@ stages:
 test:
   stage: test
   script:
-    - make setup_pip
-    - cat /root/.config/pip/pip.conf
-    - pip3 install mlops-utilities
+    - export PACKAGE_VERSION=`cat version` && python3 setup.py bdist_wheel
+    - pip3 install dist/mlops_utilities-"`cat version`"-py3-none-any.whl
     - cd tests/
     - python3 -m unittest
 #  needs:
