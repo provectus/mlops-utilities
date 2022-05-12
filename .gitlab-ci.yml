@@ -1,0 +1,26 @@
+variables:
+  AWS_DEFAULT_REGION: us-east-1
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
+
+stages:
+  - deploy
+  - test
+
+test:
+  stage: test
+  script:
+    - make test
+
+build-package:
+  stage: deploy
+  script:
+    - aws codeartifact login --tool twine --repository pypi-store --domain ${CA_DOMAIN_NAME} --domain-owner ${CA_DOMAIN_OWNER}
+    - pip3 install twine
+    - make minor_version_up
+    - export PACKAGE_VERSION=`cat version` && python3 setup.py bdist_wheel
+    - twine upload --repository codeartifact dist/mlops-"`cat version`"-py3-none-any.whl
+  when: manual
+  only:
+    - dev

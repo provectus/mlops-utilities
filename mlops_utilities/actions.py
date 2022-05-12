@@ -12,7 +12,7 @@ from sagemaker import (
     get_execution_role,
     Session
 )
-from .utils import (
+from .helpers import (
     get_datetime_str,
     ensure_min_length,
     get_approved_package,
@@ -26,13 +26,14 @@ logger = logging.getLogger(__name__)
 
 def upsert_pipeline(
         pipeline_module: str,
+        pipeline_package: str,
         pipeline_name: str,
         pipeline_role: str,
         component_versions: str,
         dryrun: bool = False,
         *args,
 ):
-    mod_pipe = import_module(f'.{pipeline_module}', 'src')
+    mod_pipe = import_module(pipeline_module, pipeline_package)
     result_conf = get_conf(mod_pipe, pipeline_module, pipeline_role, args)
 
     if logger.isEnabledFor(logging.INFO):
