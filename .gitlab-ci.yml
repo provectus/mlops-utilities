@@ -20,6 +20,9 @@ test:
   script:
     - cd tests/
     - python3 -m unittest
+  needs:
+    - job: build-package
+      optional: true
 
 build-package:
   stage: deploy
