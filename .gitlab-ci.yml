@@ -19,7 +19,8 @@ test:
   stage: test
   script:
     - make setup_pip
-    - python3 -m pip install mlops-utilities
+    - nano /root/.config/pip/pip.conf
+    - pip3 install mlops-utilities
     - cd tests/
     - python3 -m unittest
 #  needs:
