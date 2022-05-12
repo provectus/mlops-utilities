@@ -25,14 +25,14 @@ test:
 #    - job: build-package
 #      optional: true
 
-build-package:
-  stage: deploy
-  script:
-    - aws codeartifact login --tool twine --repository pypi-store --domain ${CA_DOMAIN_NAME} --domain-owner ${CA_DOMAIN_OWNER}
-    - pip3 install twine
-    - make minor_version_up
-    - export PACKAGE_VERSION=`cat version` && python3 setup.py bdist_wheel
-    - twine upload --repository codeartifact dist/mlops_utilities-"`cat version`"-py3-none-any.whl
-  when: manual
-  only:
-    - dev
+#build-package:
+#  stage: deploy
+#  script:
+#    - aws codeartifact login --tool twine --repository pypi-store --domain ${CA_DOMAIN_NAME} --domain-owner ${CA_DOMAIN_OWNER}
+#    - pip3 install twine
+#    - make minor_version_up
+#    - export PACKAGE_VERSION=`cat version` && python3 setup.py bdist_wheel
+#    - twine upload --repository codeartifact dist/mlops_utilities-"`cat version`"-py3-none-any.whl
+#  when: manual
+#  only:
+#    - dev
