@@ -7,10 +7,9 @@ class TestPackageActions(unittest.TestCase):
     def test_upsert_pipeline(self):
         upsert_pipeline(
             pipeline_module='pipeline',
-            pipeline_package='upsert',
+            pipeline_package='tests',
             pipeline_name='test_pipeline',
             pipeline_role='test_role',
-            component_versions='latest',
             dryrun=True
         )
 

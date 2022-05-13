@@ -29,11 +29,10 @@ def upsert_pipeline(
         pipeline_package: str,
         pipeline_name: str,
         pipeline_role: str,
-        component_versions: str,
         dryrun: bool = False,
         *args,
 ):
-    mod_pipe = import_module(pipeline_module, pipeline_package)
+    mod_pipe = import_module(f'.{pipeline_module}', pipeline_package)
     result_conf = get_configs(mod_pipe, pipeline_module, pipeline_role, args)
 
     if logger.isEnabledFor(logging.INFO):
@@ -41,7 +40,7 @@ def upsert_pipeline(
     sm_session = Session(default_bucket=OmegaConf.select(result_conf, 'pipeline.default_bucket', default=None))
 
     pipeline_name = _normalize_pipeline_name(pipeline_name)
-    pipe_def = mod_pipe.get_pipeline(sm_session, pipeline_name, result_conf, component_versions)
+    pipe_def = mod_pipe.get_pipeline(sm_session, pipeline_name, result_conf)
     if logger.isEnabledFor(logging.INFO):
         logger.info("Pipeline definition:\n%s",
                     json.dumps(

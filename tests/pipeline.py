@@ -7,8 +7,7 @@ from sagemaker.workflow.steps import ProcessingStep
 def get_pipeline(
         sm_session: Session,
         pipeline_name: str,
-        conf: DictConfig,
-        component_versions: str = None,
+        conf: DictConfig
 ) -> Pipeline:
 
     return Pipeline(
