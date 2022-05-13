@@ -22,7 +22,7 @@ python3 setup.py bdist_wheel
 pip3 install dist/mlops_utilities-{version}-py3-none-any.whl
 ```
 
-### Install/Usage
+### Usage
 To install the package from AWS CodeArtifact run:
 ```
 make setup_pip CA_DOMAIN_NAME={#domain} CA_DOMAIN_OWNER={#account_id} AWS_DEFAULT_REGION={#region}
