@@ -16,9 +16,9 @@ from .helpers import (
     get_datetime_str,
     ensure_min_length,
     get_approved_package,
-    get_metrics,
-    get_conf,
-    truncate_pipeline_name
+    load_json_from_s3,
+    get_configs,
+    _normalize_pipeline_name
 )
 
 logger = logging.getLogger(__name__)
@@ -34,13 +34,13 @@ def upsert_pipeline(
         *args,
 ):
     mod_pipe = import_module(pipeline_module, pipeline_package)
-    result_conf = get_conf(mod_pipe, pipeline_module, pipeline_role, args)
+    result_conf = get_configs(mod_pipe, pipeline_module, pipeline_role, args)
 
     if logger.isEnabledFor(logging.INFO):
         logger.info('Result config:\n%s', OmegaConf.to_yaml(result_conf, resolve=True))
     sm_session = Session(default_bucket=OmegaConf.select(result_conf, 'pipeline.default_bucket', default=None))
 
-    pipeline_name = truncate_pipeline_name(pipeline_name)
+    pipeline_name = _normalize_pipeline_name(pipeline_name)
     pipe_def = mod_pipe.get_pipeline(sm_session, pipeline_name, result_conf, component_versions)
     if logger.isEnabledFor(logging.INFO):
         logger.info("Pipeline definition:\n%s",
@@ -120,8 +120,8 @@ def update_endpoint(sm, endpoint_name, data_capture_config, model_statistics_s3_
     model_deployed_description = sm.describe_model_package(
         ModelPackageName=model_deployed_description["Containers"][0]["ModelPackageName"])
 
-    new_model_metrics = get_metrics(model_statistics_s3_uri)
-    old_model_metrics = get_metrics(
+    new_model_metrics = load_json_from_s3(model_statistics_s3_uri)
+    old_model_metrics = load_json_from_s3(
         model_deployed_description["ModelMetrics"]["ModelQuality"]["Statistics"]["S3Uri"])
 
     if new_model_metrics["binary_classification_metrics"]["accuracy"] > \

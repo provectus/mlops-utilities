@@ -5,8 +5,6 @@ from pathlib import Path
 from omegaconf import OmegaConf
 from botocore.client import BaseClient
 
-logger = logging.getLogger(__name__)
-
 
 def get_datetime_str(arg_dt):
     return arg_dt.strftime('%Y-%m-%d-%H-%M-%S')
@@ -79,7 +77,7 @@ def get_approved_package(sm: BaseClient, model_package_group_name: str):
     return model_packages[0]
 
 
-def get_metrics(s3_uri):
+def load_json_from_s3(s3_uri: str):
     s3_client = boto3.client('s3')
     bucket, key = s3_uri.replace("s3://", "").split("/", 1)
     s3_response_object = s3_client.get_object(Bucket=bucket, Key=key)
@@ -87,7 +85,7 @@ def get_metrics(s3_uri):
     return json.loads(s3_response_object['Body'].read().decode('utf-8'))
 
 
-def get_conf(mod_pipe, pipeline_module, pipeline_role, args):
+def get_configs(mod_pipe, pipeline_module, pipeline_role, args):
     default_conf_path = Path(mod_pipe.__file__).parent / (pipeline_module + '.defaults.yml')
     default_conf = OmegaConf.load(default_conf_path)
     arg_conf = OmegaConf.create({'pipeline': {'role': pipeline_role}})
@@ -95,22 +93,14 @@ def get_conf(mod_pipe, pipeline_module, pipeline_role, args):
     return OmegaConf.merge(default_conf, arg_conf, override_arg_conf)
 
 
-def truncate_pipeline_name(name: str) -> str:
-    """
-    Workaround for the weird error we faced while creating/updating a pipeline:
-        botocore.exceptions.ClientError: An error occurred (ValidationException) when calling the CreatePipeline
-        operation: [string "<pipeline-name>" is too long (length: xxx, maximum allowed: 82)]
-
-    Why 82? Not sure, don't know.
-    """
-    magic_number = 82
+def _normalize_pipeline_name(name: str) -> str:
+    name_max_len = 82
     name_len = len(name)
-    if name_len > magic_number:
-        logger.info(
+    if name_len > name_max_len:
+        logging.getLogger(__name__).info(
             'Provided pipeline name "%s" is too long (%d symbols, max allowed: 82). It will be truncated.',
             name,
             name_len
         )
-        name = name[:magic_number]
-        logger.info('Updated pipeline name is: "%s"', name)
+        name = name[:name_max_len]
     return name
