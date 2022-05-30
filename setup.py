@@ -8,7 +8,7 @@ setuptools.setup(
     author="Provectus",
     author_email="ml@provectus.com",
     description="A set of utils for MLOps tasks.",
-    install_requires=['boto3==1.22.7', 'sagemaker==2.88.2', 'omegaconf==2.1.2'],
+    install_requires=['sagemaker==2.92.1', 'omegaconf==2.1.2'],
     packages=['mlops_utilities'],
     url='https://gitlab.provectus.com/mldemo/mlops-platform/mlops-utilities',
     classifiers=[
