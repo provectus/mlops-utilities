@@ -1,4 +1,5 @@
 import unittest
+from mlops_utilities import helpers
 from mlops_utilities.actions import upsert_pipeline
 from mlops_utilities.actions import run_pipeline
 
@@ -10,6 +11,10 @@ class TestPackageActions(unittest.TestCase):
             pipeline_package='tests',
             pipeline_name='test_pipeline',
             pipeline_role='test_role',
+            pipeline_tags={
+                'key_1': 'val_1',
+                'key_2': 'val_2',
+            },
             dryrun=True
         )
 
@@ -18,4 +23,30 @@ class TestPackageActions(unittest.TestCase):
             pipeline_name='test_pipeline',
             execution_name_prefix='test_pipeline',
             dryrun=True
+        )
+
+
+class TestHelpers(unittest.TestCase):
+    def test_convert_param_dict_to_key_value_list_wrong_input(self):
+        with self.assertRaises(AttributeError):
+            helpers.convert_param_dict_to_key_value_list(None)
+
+    def test_convert_param_dict_to_key_value_list_empty_input(self):
+        self.assertListEqual(
+            helpers.convert_param_dict_to_key_value_list({}),
+            [],
+        )
+
+    def test_convert_param_dict_to_key_value_list_correct_input(self):
+        self.assertListEqual(
+            helpers.convert_param_dict_to_key_value_list({
+                'key_1': 'v',
+                'key_2': 'vv',
+                'key_3': '1',
+            }),
+            [
+                {'Key': 'key_1', 'Value': 'v'},
+                {'Key': 'key_2', 'Value': 'vv'},
+                {'Key': 'key_3', 'Value': '1'},
+            ],
         )
