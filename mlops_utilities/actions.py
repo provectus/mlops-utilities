@@ -12,6 +12,7 @@ from sagemaker import (
     get_execution_role,
     Session
 )
+from typing import Dict, Optional
 from .helpers import (
     get_datetime_str,
     ensure_min_length,
@@ -20,6 +21,7 @@ from .helpers import (
     get_configs,
     _normalize_pipeline_name
 )
+from mlops_utilities import helpers
 
 logger = logging.getLogger(__name__)
 
@@ -29,9 +31,36 @@ def upsert_pipeline(
         pipeline_package: str,
         pipeline_name: str,
         pipeline_role: str,
+        pipeline_tags: Optional[Dict[str, str]] = None,
         dryrun: bool = False,
         *args,
 ):
+    """
+    Performs Sagemaker pipeline creating or updating.
+
+    Example:
+    >>> upsert_pipeline('training_pipeline', 'src', 'a_cool_pipeline_name', 'role-arn', ...)
+
+    First two arguments is set so to follow (folder) package structure described below
+    when the function is invoked from the root dir:
+        root
+        |
+        |-- src
+        |   |-- training_pipeline.py
+        |   |-- ...
+        |   `-- ...
+        |
+        ...
+
+    :param pipeline_module: a "module path" within the 'pipeline_package' (relative to the 'pipeline_package' root)
+    :param pipeline_package: a package where 'pipeline_module' is defined
+    :param pipeline_name: the name of the pipeline
+    :param pipeline_role: AWS IAM role ARN that is assumed by workflow to create step artifacts
+    :param pipeline_tags: {"<key>": "<value>", ...} dict to be set as SM pipeline resource tags
+    :param dryrun: whether to skip actual pipeline upsert or not
+    :param args: extra configuration to pass to pipeline building;
+        must follow dot-notation (https://omegaconf.readthedocs.io/en/2.0_branch/usage.html#from-a-dot-list)
+    """
     mod_pipe = import_module(f'.{pipeline_module}', pipeline_package)
     result_conf = get_configs(mod_pipe, pipeline_module, pipeline_role, args)
 
@@ -49,7 +78,9 @@ def upsert_pipeline(
                     ))
 
     if not dryrun:
-        pipe_def.upsert(result_conf.pipeline.role)
+        if pipeline_tags is not None:
+            pipeline_tags = helpers.convert_param_dict_to_key_value_list(pipeline_tags)
+        pipe_def.upsert(result_conf.pipeline.role, tags=pipeline_tags)
 
 
 def run_pipeline(

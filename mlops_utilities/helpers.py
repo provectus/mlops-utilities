@@ -4,6 +4,7 @@ import logging
 from pathlib import Path
 from omegaconf import OmegaConf
 from botocore.client import BaseClient
+from typing import Dict, List
 
 
 def get_datetime_str(arg_dt):
@@ -13,6 +14,19 @@ def get_datetime_str(arg_dt):
 def param_dict_to_nv_list(arg_dict):
     return [
         {'Name': k, 'Value': v}
+        for k, v in arg_dict.items()
+    ]
+
+
+def convert_param_dict_to_key_value_list(arg_dict: Dict[str, str]) -> List[Dict[str, str]]:
+    """
+    Convert python dict to Sagemaker SDK resource tags structure
+    where dict key corresponds to "Key", dict value corresponds to "Value".
+    :param arg_dict: key-value need to convert to AWS resource tags structure
+    :return: list of tags in the following format: [ { "Key": "...", "Value": "..." }, ... ]
+    """
+    return [
+        {'Key': k, 'Value': v}
         for k, v in arg_dict.items()
     ]
 
