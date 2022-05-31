@@ -1,5 +1,5 @@
 image:
-  name: amazon/aws-sam-cli-build-image-python3.8
+  name: python:3.8
   entrypoint: [""]
 
 services:
@@ -31,6 +31,7 @@ test:
 build-package:
   stage: deploy
   script:
+    - pip3 install awscli --upgrade
     - aws codeartifact login --tool twine --repository pypi-store --domain ${CA_DOMAIN_NAME} --domain-owner ${CA_DOMAIN_OWNER}
     - pip3 install twine
     - make minor_version_up
