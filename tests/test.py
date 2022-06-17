@@ -10,7 +10,6 @@ class TestPackageActions(unittest.TestCase):
             pipeline_module='pipeline',
             pipeline_package='tests',
             pipeline_name='test_pipeline',
-            pipeline_role='test_role',
             pipeline_tags={
                 'key_1': 'val_1',
                 'key_2': 'val_2',

@@ -30,7 +30,6 @@ def upsert_pipeline(
         pipeline_module: str,
         pipeline_package: str,
         pipeline_name: str,
-        pipeline_role: str,
         pipeline_tags: Optional[Dict[str, str]] = None,
         dryrun: bool = False,
         *args,
@@ -55,14 +54,13 @@ def upsert_pipeline(
     :param pipeline_module: a "module path" within the 'pipeline_package' (relative to the 'pipeline_package' root)
     :param pipeline_package: a package where 'pipeline_module' is defined
     :param pipeline_name: the name of the pipeline
-    :param pipeline_role: AWS IAM role ARN that is assumed by workflow to create step artifacts
     :param pipeline_tags: {"<key>": "<value>", ...} dict to be set as SM pipeline resource tags
     :param dryrun: whether to skip actual pipeline upsert or not
     :param args: extra configuration to pass to pipeline building;
         must follow dot-notation (https://omegaconf.readthedocs.io/en/2.0_branch/usage.html#from-a-dot-list)
     """
     mod_pipe = import_module(f'.{pipeline_module}', pipeline_package)
-    result_conf = get_configs(mod_pipe, pipeline_module, pipeline_role, args)
+    result_conf = get_configs(mod_pipe, pipeline_module, args)
 
     if logger.isEnabledFor(logging.INFO):
         logger.info('Result config:\n%s', OmegaConf.to_yaml(result_conf, resolve=True))
