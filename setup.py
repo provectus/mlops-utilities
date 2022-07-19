@@ -7,7 +7,7 @@ setup(
   description = 'Utility package for MlOps project',   
   author = 'Provectus Team',                   
   author_email = 'abelov@provectus.com',     
-  download_url = 'https://gitlab.provectus.com/mldemo/mlops-platform/mlops-utilities/-/tree/pypi-ready/archive/v_01.tar.gz',    # I explain this later on
+  download_url = 'https://gitlab.provectus.com/mldemo/mlops-platform/mlops-utilities/-/archive/0.0.19/mlops-utilities-0.0.19.tar.gz',    # I explain this later on
   keywords = ['MLOps', 'Utility package'],   # Keywords that define your package best
   install_requires=[            # I get to this in a second
           'boto3',
