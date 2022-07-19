@@ -1,19 +1,32 @@
-import os
-import setuptools
-
-
-setuptools.setup(
-    name="mlops-utilities",
-    version=os.environ['PACKAGE_VERSION'].strip(),
-    author="Provectus",
-    author_email="ml@provectus.com",
-    description="A set of utils for MLOps tasks.",
-    install_requires=['sagemaker==2.92.1', 'omegaconf==2.1.2'],
-    packages=['mlops_utilities'],
-    url='https://gitlab.provectus.com/mldemo/mlops-platform/mlops-utilities',
-    classifiers=[
-        "Programming Language :: Python :: 3",
-        "Operating System :: OS Independent"
-    ],
-    python_requires='>=3.8',
+from distutils.core import setup
+setup(
+  name = 'mlops_utilities',        
+  packages = ['mlops_utilities'],   
+  version = '0.1',     
+  license='MIT',       
+  description = 'Utility package for MlOps project',   
+  author = 'Provectus Team',                   
+  author_email = 'abelov@provectus.com',     
+  download_url = 'https://gitlab.provectus.com/mldemo/mlops-platform/mlops-utilities/-/tree/pypi-ready/archive/v_01.tar.gz',    # I explain this later on
+  keywords = ['MLOps', 'Utility package'],   # Keywords that define your package best
+  install_requires=[            # I get to this in a second
+          'boto3',
+          'logging',
+          'datetime',
+          'omegaconf',
+          'importlib',
+          'typing',
+          'pathlib',
+          'botocore'
+      ],
+  classifiers=[
+    'Development Status :: 4 - Beta',      # Chose either "3 - Alpha", "4 - Beta" or "5 - Production/Stable" as the current state of your package
+    'Intended Audience :: Developers',      # Define that your audience are developers
+    'Topic :: Software Development :: Build Tools',
+    'License :: OSI Approved :: MIT License',   # Again, pick a license
+    'Programming Language :: Python :: 3',      #Specify which pyhton versions that you want to support
+    'Programming Language :: Python :: 3.4',
+    'Programming Language :: Python :: 3.5',
+    'Programming Language :: Python :: 3.6',
+  ],
 )
