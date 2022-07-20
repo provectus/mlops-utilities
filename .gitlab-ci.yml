@@ -39,10 +39,6 @@ build-package:
     - pip3 install bump
     - make minor_version_up
     - bump
-    - apt-get update && apt-get install -y git
-    - git add setup.py
-    - git commit -m 'updated version of setup.py'
-    - git push origin
     - python setup.py sdist
     - twine upload dist/mlops_sm-*
   when: manual
