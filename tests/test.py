@@ -1,8 +1,7 @@
 import unittest
-from mlops_utilities import helpers
-from mlops_utilities.actions import upsert_pipeline
-from mlops_utilities.actions import run_pipeline
-
+from mlops_sm import helpers
+from mlops_sm.actions import upsert_pipeline
+from mlops_sm.actions import run_pipeline
 
 class TestPackageActions(unittest.TestCase):
     def test_upsert_pipeline(self):

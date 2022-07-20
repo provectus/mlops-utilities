@@ -1,8 +1,8 @@
 from distutils.core import setup
 setup(
-  name = 'mlops_utilities',        
-  packages = ['mlops_utilities'],   
-  version = '0.1',     
+  name = 'mlops_sm',     
+  version='0.6.1',
+  packages = ['mlops_sm'],   
   license='MIT',       
   description = 'Utility package for MlOps project',   
   author = 'Provectus Team',                   
@@ -11,11 +11,10 @@ setup(
   keywords = ['MLOps', 'Utility package'],   # Keywords that define your package best
   install_requires=[            # I get to this in a second
           'boto3',
-          'logging',
+          'sagemaker',
           'datetime',
           'omegaconf',
           'importlib',
-          'typing',
           'pathlib',
           'botocore'
       ],

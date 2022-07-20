@@ -21,7 +21,7 @@ from .helpers import (
     get_configs,
     _normalize_pipeline_name
 )
-from mlops_utilities import helpers
+from mlops_sm import helpers
 
 logger = logging.getLogger(__name__)
 
