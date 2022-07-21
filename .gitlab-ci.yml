@@ -19,8 +19,7 @@ test:
   stage: test
   script:
     - pip3 install awscli --upgrade
-    - make setup_pip
-    - pip3 install mlops-sm
+    - pip3 install mlops-test
     - python3 -m unittest
   needs:
     - job: build-package
@@ -34,10 +33,9 @@ build-package:
   stage: deploy
   script:
     - pip3 install awscli --upgrade
-    - aws codeartifact login --tool twine --repository pypi-store --domain ${CA_DOMAIN_NAME} --domain-owner ${CA_DOMAIN_OWNER}
+    - cp .pypirc ~/.pypirc
     - pip3 install twine
     - make minor_version_up
-    - cp .pypirc ~/.pypirc
     - python setup.py sdist
     - twine upload --repository='mlops-sm' dist/mlops_sm-* 
   when: manual
