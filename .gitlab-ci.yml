@@ -28,7 +28,7 @@ test:
   only:
     # TODO master
     - dev
-    - pypi-ready 
+    - pypi-ready
 
 build-package:
   stage: deploy
