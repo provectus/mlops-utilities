@@ -12,6 +12,7 @@ minor_version_up:
 	git commit -am "[skip ci] Update to new snapshot version"
 	# push
 	git push origin HEAD:${CI_COMMIT_BRANCH}
+	git pull --tags
 	git push --tags
 
 setup_pip:
