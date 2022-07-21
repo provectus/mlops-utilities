@@ -11,9 +11,8 @@ minor_version_up:
 	git add version
 	git commit -am "[skip ci] Update to new snapshot version"
 	# push
+	git tag -f "$(cat version)"
 	git push origin HEAD:${CI_COMMIT_BRANCH}
-	git pull --tags
-	git push --tags
 
 setup_pip:
 	pip3 config set global.index-url https://aws:"`aws codeartifact get-authorization-token --domain ${CA_DOMAIN_NAME} --domain-owner ${CA_DOMAIN_OWNER} --query authorizationToken --output text`"@${CA_DOMAIN_NAME}-${CA_DOMAIN_OWNER}.d.codeartifact.${AWS_DEFAULT_REGION}.amazonaws.com/pypi/pypi-store/simple/
