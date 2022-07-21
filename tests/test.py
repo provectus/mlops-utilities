@@ -26,7 +26,7 @@ class TestPackageActions(unittest.TestCase):
 
 class TestHelpers(unittest.TestCase):
     def test_convert_param_dict_to_key_value_list_wrong_input(self):
-        with self.assertRaises(AttributeError):
+        with self.assertRaises(AttributeError): 
             helpers.convert_param_dict_to_key_value_list(None)
 
     def test_convert_param_dict_to_key_value_list_empty_input(self):
