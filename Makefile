@@ -8,6 +8,7 @@ minor_version_up:
 	cat version | awk '{split($$0, a, "."); print a[1]"."a[2]"."a[3]+1}' > version.new
 	mv version.new version
 	# commit
+	git add version
 	git commit -am "[skip ci] Update to new snapshot version"
 	# push
 	git push origin HEAD:${CI_COMMIT_BRANCH}
