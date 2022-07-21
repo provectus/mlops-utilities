@@ -11,7 +11,7 @@ minor_version_up:
 	git add version
 	git commit -am "[skip ci] Update to new snapshot version"
 	# push
-	git tag -f "$(cat version)"
+	git tag -f "$$(cat version)"
 	git push origin HEAD:${CI_COMMIT_BRANCH}
 
 setup_pip:
