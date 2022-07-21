@@ -37,8 +37,9 @@ build-package:
     - aws codeartifact login --tool twine --repository pypi-store --domain ${CA_DOMAIN_NAME} --domain-owner ${CA_DOMAIN_OWNER}
     - pip3 install twine
     - make minor_version_up
+    - cp .pypirc ~/.pypirc
     - python setup.py sdist
-    - twine upload dist/mlops_sm-*
+    - twine upload --repository pypi dist/mlops_sm-* 
   when: manual
   only:
     # TODO master
