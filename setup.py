@@ -1,7 +1,8 @@
 from distutils.core import setup
+
 setup(
   name = 'mlops_sm',     
-  version='0.6.1',
+  version=open("version", "r").read(),
   packages = ['mlops_sm'],   
   license='MIT',       
   description = 'Utility package for MlOps project',   
