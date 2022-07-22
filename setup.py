@@ -13,7 +13,7 @@ setup(
           'boto3',
           'sagemaker',
           'datetime',
-          'omegaconf',
+          'omegaconf', 
           'importlib',
           'pathlib',
           'botocore'
