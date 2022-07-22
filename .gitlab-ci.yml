@@ -18,6 +18,8 @@ stages:
 test:
   stage: test
   script:
+    - pip3 install awscli --upgrade
+    - make setup_pip
     - pip3 install mlops-sm
     - python3 -m unittest
   needs:
