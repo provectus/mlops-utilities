@@ -1,6 +1,6 @@
-from distutils.core import setup
+import setuptools
 
-setup(
+setuptools.setup(
   name = 'mlops_sm',  
   version=open("version", "r").read().splitlines()[0],
   packages = ['mlops_sm'],   
@@ -18,6 +18,8 @@ setup(
           'pathlib',
           'botocore'
       ],
+  package_data={'': ['version']},
+  include_package_data=True,
   classifiers=[
     'Development Status :: 4 - Beta',      # Chose either "3 - Alpha", "4 - Beta" or "5 - Production/Stable" as the current state of your package
     'Intended Audience :: Developers',      # Define that your audience are developers
