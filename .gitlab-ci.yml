@@ -21,7 +21,7 @@ test:
     - pip3 install awscli --upgrade
     - make setup_pip
     - pip3 install --upgrade setuptools
-    - pip install mlops-sm
+    - pip3 install setuptools mlops-sm
     - python3 -m unittest
   needs:
     - job: build-package
