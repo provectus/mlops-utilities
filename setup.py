@@ -12,6 +12,7 @@ setuptools.setup(
   install_requires=[            # I get to this in a second
           'boto3',
           'sagemaker',
+          'setuptools',
           'datetime',
           'omegaconf', 
           'importlib',
