@@ -31,7 +31,7 @@ def get_pipeline(
                 processor=my_processor,
                 step_args=my_processor.run(
                     inputs=[],
-                    ouputs=[]
+                    outputs=[]
                 )
             )
         ],
