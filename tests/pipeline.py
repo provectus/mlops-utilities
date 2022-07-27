@@ -6,9 +6,12 @@ from sagemaker.workflow.pipeline_context import PipelineSession
 
 from sagemaker.processing import Processor
 
+from sagemaker.image_uris import get_training_image_uri
+
 pipeline_session = PipelineSession()
 my_processor = Processor(
     role='arn:aws:iam::311638508164:role/AmazonSageMaker-ExecutionRole',
+    image_uri=get_training_image_uri('XGBoost','us-east-1'),
     instance_type='ml.m5.xlarge',
     instance_count=1,
     sagemaker_session=pipeline_session
