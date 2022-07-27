@@ -28,7 +28,6 @@ def get_pipeline(
         steps=[
             ProcessingStep(
                 name=conf.step.name,
-                processor=my_processor,
                 step_args=my_processor.run(
                     inputs=[],
                     outputs=[]
