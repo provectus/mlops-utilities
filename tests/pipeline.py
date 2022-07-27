@@ -11,7 +11,7 @@ from sagemaker.image_uris import get_training_image_uri
 pipeline_session = PipelineSession()
 my_processor = Processor(
     role='arn:aws:iam::311638508164:role/AmazonSageMaker-ExecutionRole',
-    image_uri=get_training_image_uri(region='us-east-1',framework='xgboost'),
+    image_uri=get_training_image_uri(region='us-east-1',framework='xgboost',framework_version='latest'),
     instance_type='ml.m5.xlarge',
     instance_count=1,
     sagemaker_session=pipeline_session
