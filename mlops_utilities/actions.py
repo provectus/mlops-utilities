@@ -30,6 +30,7 @@ def upsert_pipeline(
         pipeline_module: str,
         pipeline_package: str,
         pipeline_name: str,
+        role: str,
         pipeline_tags: Optional[Dict[str, str]] = None,
         dryrun: bool = False,
         *args,
@@ -51,6 +52,7 @@ def upsert_pipeline(
         |
         ...
 
+    :param role:
     :param pipeline_module: a "module path" within the 'pipeline_package' (relative to the 'pipeline_package' root)
     :param pipeline_package: a package where 'pipeline_module' is defined
     :param pipeline_name: the name of the pipeline
@@ -59,8 +61,8 @@ def upsert_pipeline(
     :param args: extra configuration to pass to pipeline building;
         must follow dot-notation (https://omegaconf.readthedocs.io/en/2.0_branch/usage.html#from-a-dot-list)
     """
-    mod_pipe = import_module(f'.{pipeline_module}', pipeline_package)
-    result_conf = get_configs(mod_pipe, pipeline_module, args)
+    mod_pipe = import_module(f'{pipeline_module}.{pipeline_package}')
+    result_conf = get_configs(mod_pipe, 'training_pipeline', role, args)
 
     if logger.isEnabledFor(logging.INFO):
         logger.info('Result config:\n%s', OmegaConf.to_yaml(result_conf, resolve=True))
@@ -85,7 +87,7 @@ def run_pipeline(
         pipeline_name,
         execution_name_prefix,
         dryrun=False,
-        **pipe_params):
+        pipe_params={}):
     sm = boto3.client('sagemaker')
     now = datetime.today()
     now_str = get_datetime_str(now)

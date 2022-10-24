@@ -12,3 +12,5 @@ __pycache__/
 dist/
 venv/
 build/
+components/
+pipelines/
