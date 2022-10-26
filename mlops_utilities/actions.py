@@ -158,7 +158,9 @@ def update_endpoint(sm, endpoint_name, data_capture_config, model_statistics_s3_
             old_model_metrics["binary_classification_metrics"]["accuracy"]:
 
         predictor = Predictor(endpoint_name=endpoint_name)
-        predictor.update_endpoint(model_name=des_end_conf["ProductionVariants"][0]["ModelName"])
+        predictor.update_endpoint(initial_instance_count=1,
+                                  instance_type='ml.m5.large',
+                                  model_name=des_end_conf["ProductionVariants"][0]["ModelName"])
         predictor.update_data_capture_config(data_capture_config)
     else:
         logger.info(
@@ -169,6 +171,7 @@ def update_endpoint(sm, endpoint_name, data_capture_config, model_statistics_s3_
 def create_endpoint(model_package_arn, sagemaker_session,
                     instance_count, instance_type, endpoint_name,
                     data_capture_config):
+    # tested with role 'arn:aws:iam::311638508164:role/AmazonSageMaker-ExecutionRole'
     role = get_execution_role()
     model = ModelPackage(
         role=role, model_package_arn=model_package_arn, sagemaker_session=sagemaker_session
