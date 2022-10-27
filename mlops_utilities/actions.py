@@ -18,7 +18,7 @@ from .helpers import (
     ensure_min_length,
     get_approved_package,
     load_json_from_s3,
-    get_configs,
+    get_pipeline_config,
     _normalize_pipeline_name
 )
 from mlops_utilities import helpers
@@ -52,7 +52,7 @@ def upsert_pipeline(
         |
         ...
 
-    :param role:
+    :param role: your IAM role
     :param pipeline_module: a "module path" within the 'pipeline_package' (relative to the 'pipeline_package' root)
     :param pipeline_package: a package where 'pipeline_module' is defined
     :param pipeline_name: the name of the pipeline
@@ -61,15 +61,15 @@ def upsert_pipeline(
     :param args: extra configuration to pass to pipeline building;
         must follow dot-notation (https://omegaconf.readthedocs.io/en/2.0_branch/usage.html#from-a-dot-list)
     """
-    mod_pipe = import_module(f'{pipeline_module}.{pipeline_package}')
-    result_conf = get_configs(mod_pipe, 'training_pipeline', role, args)
+    pipeline_module = import_module(f'{pipeline_module}.{pipeline_package}')
+    result_conf = get_pipeline_config(pipeline_module, 'training_pipeline', role, args)
 
     if logger.isEnabledFor(logging.INFO):
         logger.info('Result config:\n%s', OmegaConf.to_yaml(result_conf, resolve=True))
     sm_session = Session(default_bucket=OmegaConf.select(result_conf, 'pipeline.default_bucket', default=None))
 
     pipeline_name = _normalize_pipeline_name(pipeline_name)
-    pipe_def = mod_pipe.get_pipeline(sm_session, pipeline_name, result_conf)
+    pipe_def = pipeline_module.get_pipeline(sm_session, pipeline_name, result_conf)
     if logger.isEnabledFor(logging.INFO):
         logger.info("Pipeline definition:\n%s",
                     json.dumps(
@@ -87,7 +87,7 @@ def run_pipeline(
         pipeline_name,
         execution_name_prefix,
         dryrun=False,
-        pipe_params={}):
+        pipeline_params={}):
     sm = boto3.client('sagemaker')
     now = datetime.today()
     now_str = get_datetime_str(now)
@@ -100,7 +100,7 @@ def run_pipeline(
                 'Name': k,
                 'Value': str(v)
             }
-            for k, v in pipe_params.items()
+            for k, v in pipeline_params.items()
         ],
         'ClientRequestToken': ensure_min_length(pipe_exec_name, 32)
     }
