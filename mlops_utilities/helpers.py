@@ -99,8 +99,8 @@ def load_json_from_s3(s3_uri: str):
     return json.loads(s3_response_object['Body'].read().decode('utf-8'))
 
 
-def get_pipeline_config(mod_pipe, pipeline_module, pipeline_role, args):
-    default_conf_path = f'{Path(mod_pipe.__file__).parent}/{pipeline_module}.defaults.yml'
+def get_pipeline_config(mod_pipe, pipeline_module, config_type, pipeline_role, args):
+    default_conf_path = f'{Path(mod_pipe.__file__).parent}/{pipeline_module}.{config_type}.yml'
     default_conf = OmegaConf.load(default_conf_path)
     arg_conf = OmegaConf.create({'pipeline': {'role': pipeline_role}})
     override_arg_conf = OmegaConf.from_dotlist(args)

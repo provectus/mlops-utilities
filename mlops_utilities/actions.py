@@ -30,6 +30,7 @@ def upsert_pipeline(
         pipeline_module: str,
         pipeline_package: str,
         pipeline_name: str,
+        config_type: str,
         role: str,
         pipeline_tags: Optional[Dict[str, str]] = None,
         dryrun: bool = False,
@@ -39,7 +40,7 @@ def upsert_pipeline(
     Performs Sagemaker pipeline creating or updating.
 
     Example:
-    >>> upsert_pipeline('training_pipeline', 'src', 'a_cool_pipeline_name', 'role-arn', ...)
+    >>> upsert_pipeline('training_pipeline', 'src', 'a_cool_pipeline_name', 'defaults', 'role-arn', ...)
 
     First two arguments is set so to follow (folder) package structure described below
     when the function is invoked from the root dir:
@@ -52,6 +53,7 @@ def upsert_pipeline(
         |
         ...
 
+    :param config_type: name of the pipeline yml file with configurations, training_pipeline.<config_type>.yml
     :param role: your IAM role
     :param pipeline_module: a "module path" within the 'pipeline_package' (relative to the 'pipeline_package' root)
     :param pipeline_package: a package where 'pipeline_module' is defined
@@ -62,7 +64,7 @@ def upsert_pipeline(
         must follow dot-notation (https://omegaconf.readthedocs.io/en/2.0_branch/usage.html#from-a-dot-list)
     """
     pipeline_module = import_module(f'{pipeline_module}.{pipeline_package}')
-    result_conf = get_pipeline_config(pipeline_module, 'training_pipeline', role, args)
+    result_conf = get_pipeline_config(pipeline_module, 'training_pipeline', config_type, role, args)
 
     if logger.isEnabledFor(logging.INFO):
         logger.info('Result config:\n%s', OmegaConf.to_yaml(result_conf, resolve=True))
@@ -171,7 +173,6 @@ def update_endpoint(sm, endpoint_name, data_capture_config, model_statistics_s3_
 def create_endpoint(model_package_arn, sagemaker_session,
                     instance_count, instance_type, endpoint_name,
                     data_capture_config):
-    # tested with role 'arn:aws:iam::311638508164:role/AmazonSageMaker-ExecutionRole'
     role = get_execution_role()
     model = ModelPackage(
         role=role, model_package_arn=model_package_arn, sagemaker_session=sagemaker_session
