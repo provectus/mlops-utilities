@@ -89,7 +89,7 @@ def run_pipeline(
     !!! This pipeline should be created and should uploaded to Sagemaaker.
 
     Example:
-    >>> run_pipeline('a_cool_pipeline_name', 'training_exec')
+    >>> run_pipeline(boto3.client('sagemaker'), 'a_cool_pipeline_name', 'training_exec')
 
     :param sagemaker_client: boto3_session_client(sagemaker)
     :param pipeline_name: uploaded Sagemaker pipeline name
