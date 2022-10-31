@@ -138,6 +138,13 @@ def deploy_model(model_package_group_name, instance_type, instance_count, endpoi
 
 
 def compare_metrics(sm, des_end_conf, model_statistics_s3_uri, metric):
+    """
+    :param sm: sagemaker session
+    :param des_end_conf: endpoint configuration
+    :param model_statistics_s3_uri: s3 url to evaluation.json
+    :param metric: path to metric in json file, example: 'regression_metrics/mse/value'
+    :return: result of metric comparison
+    """
     model_deployed_description = sm.describe_model(ModelName=des_end_conf["ProductionVariants"][0]["ModelName"])
     model_deployed_description = sm.describe_model_package(
         ModelPackageName=model_deployed_description["Containers"][0]["ModelPackageName"])
