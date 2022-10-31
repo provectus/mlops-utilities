@@ -5,7 +5,6 @@ from importlib import import_module
 from typing import Dict, Optional, NoReturn, Any
 
 import boto3
-import sagemaker
 from omegaconf import OmegaConf
 from sagemaker import (
     Predictor,
@@ -79,7 +78,6 @@ def upsert_pipeline(
 
 
 def run_pipeline(
-        sagemaker_client,
         pipeline_name: str,
         execution_name_prefix: str,
         dryrun=False,
@@ -89,14 +87,14 @@ def run_pipeline(
     !!! This pipeline should be created and should uploaded to Sagemaaker.
 
     Example:
-    >>> run_pipeline(boto3.client('sagemaker'), 'a_cool_pipeline_name', 'training_exec')
+    >>> run_pipeline('a_cool_pipeline_name', 'training_exec')
 
-    :param sagemaker_client: boto3_session_client(sagemaker)
     :param pipeline_name: uploaded Sagemaker pipeline name
     :param execution_name_prefix: prefix for pipeline running job
     :param dryrun: should be run in test mode without real execution. If true then the method returns only arguments
     :param pipeline_params: additional parameters for pipeline
     """
+    sagemaker_client = boto3.client('sagemaker')  # Can not be cut off because it could not be presented as string
     now = datetime.today()
     now_str = helpers.get_datetime_str(now)
     pipe_exec_name = f'{execution_name_prefix}-{now_str}'
