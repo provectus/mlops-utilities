@@ -128,10 +128,7 @@ def deploy_model(model_package_group_name, instance_type, instance_count, endpoi
 
     if len(endpoints) > 0:
         logger.info("Update current endpoint")
-
-        model_statistics_s3_uri = model_description["ModelMetrics"]["ModelQuality"]["Statistics"]["S3Uri"]
-        update_endpoint(sm, endpoint_name, data_capture_config, model_statistics_s3_uri)
-
+        update_endpoint(sm, endpoint_name, data_capture_config)
     else:
         logger.info("Create endpoint")
 
@@ -140,19 +137,25 @@ def deploy_model(model_package_group_name, instance_type, instance_count, endpoi
                         data_capture_config)
 
 
-def update_endpoint(sm, endpoint_name, data_capture_config, model_statistics_s3_uri):
-    des_end_conf = sm.describe_endpoint_config(EndpointConfigName=endpoint_name)
+def compare_metrics(sm, des_end_conf, model_statistics_s3_uri, metric):
     model_deployed_description = sm.describe_model(ModelName=des_end_conf["ProductionVariants"][0]["ModelName"])
     model_deployed_description = sm.describe_model_package(
         ModelPackageName=model_deployed_description["Containers"][0]["ModelPackageName"])
-
     new_model_metrics = helpers.load_json_from_s3(model_statistics_s3_uri)
     old_model_metrics = helpers.load_json_from_s3(
         model_deployed_description["ModelMetrics"]["ModelQuality"]["Statistics"]["S3Uri"])
+    metric_path = metric.split('/')
 
-    if new_model_metrics["binary_classification_metrics"]["accuracy"] > \
-            old_model_metrics["binary_classification_metrics"]["accuracy"]:
+    return helpers.getValueFromDict(new_model_metrics, metric_path[:-1])[metric_path[-1]] > \
+           helpers.getValueFromDict(old_model_metrics, metric_path[:-1])[metric_path[-1]]
 
+
+def update_endpoint(sm, endpoint_name, data_capture_config, model_statistics_s3_uri=None, metric=None):
+    des_end_conf = sm.describe_endpoint_config(EndpointConfigName=endpoint_name)
+    require_update = True if metric is None else \
+        (True if compare_metrics(sm, des_end_conf, model_statistics_s3_uri, metric) else False)
+
+    if require_update:
         predictor = Predictor(endpoint_name=endpoint_name)
         predictor.update_endpoint(initial_instance_count=1,
                                   instance_type='ml.m5.large',
@@ -160,7 +163,7 @@ def update_endpoint(sm, endpoint_name, data_capture_config, model_statistics_s3_
         predictor.update_data_capture_config(data_capture_config)
     else:
         logger.info(
-            "Current endpoint is not updated because the new model have worse quality than current deployd model"
+            "Current endpoint is not updated because the new model have worse quality than current deployed model"
         )
 
 

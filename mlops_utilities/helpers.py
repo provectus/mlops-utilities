@@ -1,4 +1,7 @@
 import json
+import operator
+from functools import reduce
+
 import boto3
 import logging
 from pathlib import Path
@@ -29,6 +32,17 @@ def convert_param_dict_to_key_value_list(arg_dict: Dict[str, str]) -> List[Dict[
         {'Key': k, 'Value': v}
         for k, v in arg_dict.items()
     ]
+
+
+def getValueFromDict(dataDict, mapList):
+    """
+       Get necessary metric from evaluation.json
+       :param dataDict: dictionary that contains metrics {{"regression_metrics": {"mse":..}}
+       :param mapList: path to metric ['regression_metrics','mse',…]
+       :return: dictionary that contains target metric:
+       for example {mse: 2.1} --from--> { "Key 01": { "Key 02:…{mse: 2.1}"}
+    """
+    return reduce(operator.getitem, mapList, dataDict)
 
 
 def normalize_key(key: str):
