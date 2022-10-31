@@ -2,7 +2,7 @@ import json
 import logging
 from datetime import datetime
 from importlib import import_module
-from typing import Dict, Optional
+from typing import Dict, Optional, NoReturn, Any
 
 import boto3
 import sagemaker
@@ -10,7 +10,6 @@ from omegaconf import OmegaConf
 from sagemaker import (
     Predictor,
     ModelPackage,
-    get_execution_role,
     Session
 )
 from sagemaker.model_monitor import DataCaptureConfig
@@ -29,7 +28,7 @@ def upsert_pipeline(
         pipeline_tags: Optional[Dict[str, str]] = None,
         dryrun: bool = False,
         *args,
-):
+) -> NoReturn:
     """
     Performs Sagemaker pipeline creating or updating.
 
@@ -65,26 +64,39 @@ def upsert_pipeline(
     sm_session = Session(default_bucket=OmegaConf.select(result_conf, 'pipeline.default_bucket', default=None))
 
     pipeline_name = helpers._normalize_pipeline_name(pipeline_name)
-    pipe_def = pipeline_module.get_pipeline(sm_session, pipeline_name, result_conf)
+    pipeline_object = pipeline_module.get_pipeline(sm_session, pipeline_name, result_conf)
     if logger.isEnabledFor(logging.INFO):
         logger.info("Pipeline definition:\n%s",
                     json.dumps(
-                        json.loads(pipe_def.definition()),
+                        json.loads(pipeline_object.definition()),
                         indent=2
                     ))
 
     if not dryrun:
         if pipeline_tags is not None:
             pipeline_tags = helpers.convert_param_dict_to_key_value_list(pipeline_tags)
-        pipe_def.upsert(result_conf.pipeline.role, tags=pipeline_tags)
+        pipeline_object.upsert(result_conf.pipeline.role, tags=pipeline_tags)
 
 
 def run_pipeline(
-        pipeline_name,
-        execution_name_prefix,
+        sagemaker_client,
+        pipeline_name: str,
+        execution_name_prefix: str,
         dryrun=False,
-        pipeline_params={}):
-    sm = boto3.client('sagemaker')
+        pipeline_params={}) -> NoReturn:
+    """
+    Performs Sagemaker pipeline running.
+    !!! This pipeline should be created and should uploaded to Sagemaaker.
+
+    Example:
+    >>> run_pipeline('a_cool_pipeline_name', 'training_exec')
+
+    :param sagemaker_client: boto3_session_client(sagemaker)
+    :param pipeline_name: uploaded Sagemaker pipeline name
+    :param execution_name_prefix: prefix for pipeline running job
+    :param dryrun: should be run in test mode without real execution. If true then the method returns only arguments
+    :param pipeline_params: additional parameters for pipeline
+    """
     now = datetime.today()
     now_str = helpers.get_datetime_str(now)
     pipe_exec_name = f'{execution_name_prefix}-{now_str}'
@@ -103,22 +115,37 @@ def run_pipeline(
     if dryrun:
         return start_pipe_args
     else:
-        return sm.start_pipeline_execution(**start_pipe_args)
+        return sagemaker_client.start_pipeline_execution(**start_pipe_args)
 
 
-def deploy_model(model_package_group_name, instance_type, instance_count, endpoint_name, data_capture_s3_uri):
+def deploy_model(
+        sagemaker_session: Session,
+        model_package_group_name: str,
+        instance_type: str,
+        instance_count: int,
+        endpoint_name: str,
+        data_capture_s3_uri: str,
+        role: str) -> NoReturn:
+    """
+
+    :param sagemaker_session: Sagemaker session
+    :param model_package_group_name: destination model package of deploying
+    :param instance_type: instance types on which the model is deployed
+    :param instance_count: amount of instances on which the model is deployed
+    :param endpoint_name:
+    :param data_capture_s3_uri: s3 bucket which accumulates data capture
+    :param role: execution IAM role
+    """
     instance_count = int(instance_count)
 
-    boto_sess = boto3.Session()
-    sm = boto_sess.client("sagemaker")
-    sagemaker_session = sagemaker.Session(boto_session=boto_sess)
+    sagemaker_client = sagemaker_session.sagemaker_client
 
-    pck = helpers.get_approved_package(sm, model_package_group_name)
-    model_description = sm.describe_model_package(ModelPackageName=pck["ModelPackageArn"])
+    pck = helpers.get_approved_package(sagemaker_client, model_package_group_name)
+    model_description = sagemaker_client.describe_model_package(ModelPackageName=pck["ModelPackageArn"])
 
-    logger.info("EndpointName= %s", endpoint_name)
+    logger.info(f"EndpointName= {endpoint_name}")
 
-    endpoints = sm.list_endpoints(NameContains=endpoint_name)['Endpoints']
+    endpoints = sagemaker_client.list_endpoints(NameContains=endpoint_name)['Endpoints']
 
     data_capture_config = DataCaptureConfig(
         enable_capture=True, sampling_percentage=100, destination_s3_uri=data_capture_s3_uri
@@ -128,25 +155,29 @@ def deploy_model(model_package_group_name, instance_type, instance_count, endpoi
 
     if len(endpoints) > 0:
         logger.info("Update current endpoint")
-        update_endpoint(sm, endpoint_name, data_capture_config)
+        update_endpoint(sagemaker_client, endpoint_name, data_capture_config)
     else:
         logger.info("Create endpoint")
 
         model_package_arn = model_description["ModelPackageArn"]
         create_endpoint(model_package_arn, sagemaker_session, instance_count, instance_type, endpoint_name,
-                        data_capture_config)
+                        data_capture_config, role)
 
 
-def compare_metrics(sm, des_end_conf, model_statistics_s3_uri, metric):
+def compare_metrics(sagemaker_client,
+                    endpoint_config_description: Dict[str, Any],
+                    model_statistics_s3_uri: str,
+                    metric: str) -> bool:
     """
-    :param sm: sagemaker session
-    :param des_end_conf: endpoint configuration
-    :param model_statistics_s3_uri: s3 url to evaluation.json
+    :param sagemaker_client: boto3_session_client(sagemaker)
+    :param endpoint_config_description: endpoint configuration
+    :param model_statistics_s3_uri: s3 bucket which contains evaluation metrics
     :param metric: path to metric in json file, example: 'regression_metrics/mse/value'
     :return: result of metric comparison
     """
-    model_deployed_description = sm.describe_model(ModelName=des_end_conf["ProductionVariants"][0]["ModelName"])
-    model_deployed_description = sm.describe_model_package(
+    model_deployed_description = sagemaker_client.describe_model(
+        ModelName=endpoint_config_description["ProductionVariants"][0]["ModelName"])
+    model_deployed_description = sagemaker_client.describe_model_package(
         ModelPackageName=model_deployed_description["Containers"][0]["ModelPackageName"])
     new_model_metrics = helpers.load_json_from_s3(model_statistics_s3_uri)
     old_model_metrics = helpers.load_json_from_s3(
@@ -157,16 +188,31 @@ def compare_metrics(sm, des_end_conf, model_statistics_s3_uri, metric):
            helpers.getValueFromDict(old_model_metrics, metric_path[:-1])[metric_path[-1]]
 
 
-def update_endpoint(sm, endpoint_name, data_capture_config, model_statistics_s3_uri=None, metric=None):
-    des_end_conf = sm.describe_endpoint_config(EndpointConfigName=endpoint_name)
-    require_update = True if metric is None else \
-        (True if compare_metrics(sm, des_end_conf, model_statistics_s3_uri, metric) else False)
+def update_endpoint(sagemaker_client,
+                    endpoint_name: str,
+                    data_capture_config: DataCaptureConfig,
+                    model_statistics_s3_uri: str = None,
+                    metric: str = None):
+    """
+
+    :param sagemaker_client: boto3_session_client(sagemaker)
+    :param endpoint_name:
+    :param data_capture_config: config for inference data capture
+    :param model_statistics_s3_uri: s3 bucket which contains evaluation metrics
+    :param metric: path to metric value in `model_statistics_s3_uri`
+    :return:
+    """
+    endpoint_config_description = sagemaker_client.describe_endpoint_config(EndpointConfigName=endpoint_name)
+    require_update = metric is None or (metric is not None and compare_metrics(sagemaker_client,
+                                                                               endpoint_config_description,
+                                                                               model_statistics_s3_uri,
+                                                                               metric))
 
     if require_update:
         predictor = Predictor(endpoint_name=endpoint_name)
         predictor.update_endpoint(initial_instance_count=1,
                                   instance_type='ml.m5.large',
-                                  model_name=des_end_conf["ProductionVariants"][0]["ModelName"])
+                                  model_name=endpoint_config_description["ProductionVariants"][0]["ModelName"])
         predictor.update_data_capture_config(data_capture_config)
     else:
         logger.info(
@@ -174,10 +220,24 @@ def update_endpoint(sm, endpoint_name, data_capture_config, model_statistics_s3_
         )
 
 
-def create_endpoint(model_package_arn, sagemaker_session,
-                    instance_count, instance_type, endpoint_name,
-                    data_capture_config, role=None):
-    role = get_execution_role() if role is None else role
+def create_endpoint(model_package_arn: str,
+                    sagemaker_session: Session,
+                    instance_count: int,
+                    instance_type: str,
+                    endpoint_name: str,
+                    data_capture_config: DataCaptureConfig,
+                    role: str):
+    """
+
+    :param model_package_arn: model package descriptor
+    :param sagemaker_session: Sagemaker session
+    :param instance_count: amount of instances on which the model is deployed
+    :param instance_type: instance types on which the model is deployed
+    :param endpoint_name: endpoint name as string
+    :param data_capture_config: config for inference data capture
+    :param role: execution IAM role
+    :return:
+    """
     model = ModelPackage(
         role=role, model_package_arn=model_package_arn, sagemaker_session=sagemaker_session
     )
