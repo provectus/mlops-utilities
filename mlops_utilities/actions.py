@@ -56,13 +56,13 @@ def upsert_pipeline(
         must follow dot-notation (https://omegaconf.readthedocs.io/en/2.0_branch/usage.html#from-a-dot-list)
     """
     pipeline_module = import_module(f'{pipeline_module}.{pipeline_package}')
-    result_conf = helpers.get_pipeline_config(pipeline_module, config_type, role, args)
+    result_conf = helpers.get_pipeline_config(pipeline_module, config_type, role, list(args))
 
     if logger.isEnabledFor(logging.INFO):
         logger.info('Result config:\n%s', OmegaConf.to_yaml(result_conf, resolve=True))
     sm_session = Session(default_bucket=OmegaConf.select(result_conf, 'pipeline.default_bucket', default=None))
 
-    pipeline_name = helpers._normalize_pipeline_name(pipeline_name)
+    pipeline_name = helpers.normalize_pipeline_name(pipeline_name)
     pipeline_object = pipeline_module.get_pipeline(sm_session, pipeline_name, result_conf)
     if logger.isEnabledFor(logging.INFO):
         logger.info("Pipeline definition:\n%s",
@@ -81,10 +81,10 @@ def run_pipeline(
         pipeline_name: str,
         execution_name_prefix: str,
         dryrun=False,
-        pipeline_params={}) -> NoReturn:
+        **pipeline_params) -> NoReturn:
     """
     Performs Sagemaker pipeline running.
-    !!! This pipeline should be created and should uploaded to Sagemaaker.
+    !!! This pipeline should be created and should be uploaded to Sagemaaker.
 
     Example:
     >>> run_pipeline('a_cool_pipeline_name', 'training_exec')
@@ -125,7 +125,7 @@ def deploy_model(
         data_capture_s3_uri: str,
         role: str) -> NoReturn:
     """
-
+    Method deploys model to Sagemaker
     :param sagemaker_session: Sagemaker session
     :param model_package_group_name: destination model package of deploying
     :param instance_type: instance types on which the model is deployed
@@ -168,6 +168,7 @@ def compare_metrics(sagemaker_client,
                     metric: str,
                     dryrun: bool = False) -> bool:
     """
+    This method compares metrics of old and new model versions
     :param sagemaker_client: boto3_session_client(sagemaker)
     :param endpoint_config_description: endpoint configuration
     :param model_statistics_s3_uri: s3 bucket which contains evaluation metrics
@@ -185,8 +186,9 @@ def compare_metrics(sagemaker_client,
         model_deployed_description["ModelMetrics"]["ModelQuality"]["Statistics"]["S3Uri"])
     metric_path = metric.split('/')
 
-    return helpers.getValueFromDict(new_model_metrics, metric_path[:-1])[metric_path[-1]] > \
-           helpers.getValueFromDict(old_model_metrics, metric_path[:-1])[metric_path[-1]]
+    new_metric = helpers.get_value_from_dict(new_model_metrics, metric_path[:-1])[metric_path[-1]]
+    old_metric = helpers.get_value_from_dict(old_model_metrics, metric_path[:-1])[metric_path[-1]]
+    return new_metric >= old_metric
 
 
 def update_endpoint(sagemaker_client,
@@ -196,7 +198,7 @@ def update_endpoint(sagemaker_client,
                     metric: str = None,
                     dryrun: bool = False) -> NoReturn:
     """
-
+    Updating Sagemaker endpoint
     :param sagemaker_client: boto3_session_client(sagemaker)
     :param endpoint_name:
     :param data_capture_config: config for inference data capture
@@ -232,7 +234,7 @@ def create_endpoint(model_package_arn: str,
                     data_capture_config: DataCaptureConfig,
                     role: str) -> NoReturn:
     """
-
+    It executes endpoint creation into Sagemaker
     :param model_package_arn: model package descriptor
     :param sagemaker_session: Sagemaker session
     :param instance_count: amount of instances on which the model is deployed
