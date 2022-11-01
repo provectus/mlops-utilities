@@ -190,7 +190,8 @@ def update_endpoint(sagemaker_client,
                     endpoint_name: str,
                     data_capture_config: DataCaptureConfig,
                     model_statistics_s3_uri: str = None,
-                    metric: str = None):
+                    metric: str = None,
+                    dryrun: bool = False) -> NoReturn:
     """
 
     :param sagemaker_client: boto3_session_client(sagemaker)
@@ -198,9 +199,11 @@ def update_endpoint(sagemaker_client,
     :param data_capture_config: config for inference data capture
     :param model_statistics_s3_uri: s3 bucket which contains evaluation metrics
     :param metric: path to metric value in `model_statistics_s3_uri`
+    :param dryrun: is 'True' in a case of testing
     :return:
     """
     endpoint_config_description = sagemaker_client.describe_endpoint_config(EndpointConfigName=endpoint_name)
+    model_name = endpoint_config_description["ProductionVariants"][0]["ModelName"] if dryrun is False else 'model'
     require_update = metric is None or (metric is not None and compare_metrics(sagemaker_client,
                                                                                endpoint_config_description,
                                                                                model_statistics_s3_uri,
@@ -210,7 +213,7 @@ def update_endpoint(sagemaker_client,
         predictor = Predictor(endpoint_name=endpoint_name)
         predictor.update_endpoint(initial_instance_count=1,
                                   instance_type='ml.m5.large',
-                                  model_name=endpoint_config_description["ProductionVariants"][0]["ModelName"])
+                                  model_name=model_name)
         predictor.update_data_capture_config(data_capture_config)
     else:
         logger.info(
@@ -224,7 +227,7 @@ def create_endpoint(model_package_arn: str,
                     instance_type: str,
                     endpoint_name: str,
                     data_capture_config: DataCaptureConfig,
-                    role: str):
+                    role: str) -> NoReturn:
     """
 
     :param model_package_arn: model package descriptor

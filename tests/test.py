@@ -1,19 +1,18 @@
 import unittest
+
 from mlops_utilities import helpers
-from mlops_utilities.actions import upsert_pipeline
-from mlops_utilities.actions import run_pipeline
+from mlops_utilities.actions import upsert_pipeline, run_pipeline
 
 
 class TestPackageActions(unittest.TestCase):
+
     def test_upsert_pipeline(self):
         upsert_pipeline(
-            pipeline_module='pipeline',
-            pipeline_package='tests',
+            pipeline_module='pipelines',
+            pipeline_package='training_pipeline',
             pipeline_name='test_pipeline',
-            pipeline_tags={
-                'key_1': 'val_1',
-                'key_2': 'val_2',
-            },
+            config_type='training_pipeline.defaults',
+            role='arn:aws:iam::311638508164:role/AmazonSageMaker-ExecutionRole',
             dryrun=True
         )
 
