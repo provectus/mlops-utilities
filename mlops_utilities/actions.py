@@ -80,8 +80,8 @@ def upsert_pipeline(
 def run_pipeline(
         pipeline_name: str,
         execution_name_prefix: str,
-        dryrun=False,
-        **pipeline_params) -> NoReturn:
+        pipeline_params: Dict[str, Any],
+        dryrun=False) -> NoReturn:
     """
     Performs Sagemaker pipeline running.
     !!! This pipeline should be created and should be uploaded to Sagemaaker.
