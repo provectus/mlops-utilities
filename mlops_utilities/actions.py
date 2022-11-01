@@ -165,20 +165,23 @@ def deploy_model(
 def compare_metrics(sagemaker_client,
                     endpoint_config_description: Dict[str, Any],
                     model_statistics_s3_uri: str,
-                    metric: str) -> bool:
+                    metric: str,
+                    dryrun: bool = False) -> bool:
     """
     :param sagemaker_client: boto3_session_client(sagemaker)
     :param endpoint_config_description: endpoint configuration
     :param model_statistics_s3_uri: s3 bucket which contains evaluation metrics
     :param metric: path to metric in json file, example: 'regression_metrics/mse/value'
+    :param dryrun: is True in case of test
     :return: result of metric comparison
     """
     model_deployed_description = sagemaker_client.describe_model(
         ModelName=endpoint_config_description["ProductionVariants"][0]["ModelName"])
     model_deployed_description = sagemaker_client.describe_model_package(
         ModelPackageName=model_deployed_description["Containers"][0]["ModelPackageName"])
-    new_model_metrics = helpers.load_json_from_s3(model_statistics_s3_uri)
-    old_model_metrics = helpers.load_json_from_s3(
+    test_json_metrics = {"regression_metrics": {"mse": {"value": 4}}}
+    new_model_metrics = test_json_metrics if dryrun else helpers.load_json_from_s3(model_statistics_s3_uri)
+    old_model_metrics = test_json_metrics if dryrun else helpers.load_json_from_s3(
         model_deployed_description["ModelMetrics"]["ModelQuality"]["Statistics"]["S3Uri"])
     metric_path = metric.split('/')
 

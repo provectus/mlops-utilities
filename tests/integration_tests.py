@@ -34,7 +34,8 @@ class TestPackageActions(unittest.TestCase):
         compare_metrics(sagemaker_client=sm_client,
                         endpoint_config_description=endpoint_config_description,
                         model_statistics_s3_uri=evaluate_s3,
-                        metric=metric_path
+                        metric=metric_path,
+                        dryrun=True
                         )
 
     @mock_sagemaker_session
