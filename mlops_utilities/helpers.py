@@ -12,7 +12,7 @@ from omegaconf import OmegaConf, dictconfig
 
 
 # TODO: check and setup output type for all SM dependent method
-### Sagemaker dependent methods
+# Sagemaker dependent methods
 
 def get_pipeline_config(pipeline_module, config_type: str, pipeline_role: str, args: List) -> dictconfig:
     """
@@ -69,7 +69,23 @@ def load_json_from_s3(s3_uri: str) -> Dict:
     return json.loads(s3_response_object['Body'].read().decode('utf-8'))
 
 
-### Common methods
+def create_model_from_model_package(
+        sagemaker_client: BaseClient,
+        model_name: str,
+        model_package_arn: str,
+        execution_role: str,
+        tags: List[Dict[str, str]],
+) -> str:
+    response = sagemaker_client.create_model(
+        ModelName=model_name,
+        Containers=[{'ModelPackageName': model_package_arn}],
+        ExecutionRoleArn=execution_role,
+        Tags=tags,
+    )
+    return response['ModelArn']
+
+
+# Common methods
 
 def get_datetime_str(date_time: datetime) -> str:
     return date_time.strftime('%Y-%m-%d-%H-%M-%S')
@@ -91,7 +107,7 @@ def convert_param_dict_to_key_value_list(arg_dict: Dict[str, str]) -> List[Dict[
 def get_value_from_dict(data_dict: Dict[str, Any], path: List[str]) -> Mapping:
     """
        Get necessary metric from evaluation.json
-       :param data_dict: dictionary that contains metrics {{"regression_metrics": {"mse":..}}
+       :param data_dict: dictionary that contains metrics {"regression_metrics": {"mse":..}}
        :param path: path to metric ['regression_metrics','mse',…]
        :return: dictionary that contains target metric:
        for example {mse: 2.1} --from--> { "Key 01": { "Key 02:…{mse: 2.1}"}
@@ -135,3 +151,16 @@ def normalize_pipeline_name(name: str, name_max_len: int = 82) -> str:
         )
         name = name[:name_max_len]
     return name
+
+
+def _generate_data_capture_config(
+        s3_destination_prefix: str,
+        sampling_percentage: int = 100,
+) -> Dict[str, Any]:
+    return {
+        'EnableCapture': True,
+        'InitialSamplingPercentage': sampling_percentage,
+        'DestinationS3Uri': s3_destination_prefix,
+        'CaptureOptions': [{'CaptureMode': 'Input'}, {'CaptureMode': 'Output'}],  # both by default
+        'CaptureContentTypeHeader': {'CsvContentTypes': ['text/csv']},
+    }
