@@ -3,6 +3,7 @@ import unittest
 from unittest.mock import MagicMock
 
 from mlops_utilities.actions import create_endpoint, update_endpoint, compare_metrics
+from mlops_utilities import helpers
 
 
 def mock_sagemaker_session(f):
@@ -24,6 +25,30 @@ def mock_sagemaker_session(f):
 class TestPackageActions(unittest.TestCase):
     endpoint_name = 'TestEndpoint'
     test_instance_type = 'ml.m5.large'
+    test_role = 'arn:aws:iam::311638508164:role/AmazonSageMaker-ExecutionRole'
+
+    @mock_sagemaker_session
+    def test_get_approved_package(self, **kwargs):
+        sm_client = kwargs.pop("sm_client")
+        model_package_group_name = 'test-Sokolov'
+        helpers.get_approved_package(sm_client, model_package_group_name)
+
+    @mock_sagemaker_session
+    def test_get_model_location(self, **kwargs):
+        sm_client = kwargs.pop("sm_client")
+        helpers.get_model_location(sm_client, 'test-Sokolov')
+
+    @mock_sagemaker_session
+    def test_create_model_from_model_package(self, **kwargs):
+        sm_client = kwargs.pop("sm_client")
+        model_package_arn = 'arn:aws:sagemaker:us-east-1:311638508164:model-package/test-sokolov/1'
+        helpers.create_model_from_model_package(
+            sagemaker_client=sm_client,
+            model_name='model',
+            model_package_arn=model_package_arn,
+            execution_role=self.test_role,
+            tags=None,
+        )
 
     @mock_sagemaker_session
     def test_compare_metrics(self, **kwargs):
@@ -48,7 +73,7 @@ class TestPackageActions(unittest.TestCase):
             instance_type=self.test_instance_type,
             endpoint_name=self.endpoint_name,
             data_capture_config=None,
-            role='arn:aws:iam::311638508164:role/AmazonSageMaker-ExecutionRole',
+            role=self.test_role,
         )
 
     @mock_sagemaker_session
