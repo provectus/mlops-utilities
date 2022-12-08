@@ -11,4 +11,4 @@ echo "Bumped to new version: $new_version"
 # commit changes
 git commit -am "[skip ci] Version updated to $new_version"
 # tag release version
-git tag "version-$new_version"
+git tag $new_version
