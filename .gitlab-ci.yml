@@ -28,7 +28,7 @@ default:
 bump-version:
   stage: build
   script:
-    - make minor_version_up
+    - make patch_version_up
   when: manual
   allow_failure: false
   rules:
