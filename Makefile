@@ -1,8 +1,10 @@
 test:
 	poetry run python3 -m unittest -v
 
-minor_version_up:
+patch_version_up:
 	./bump_version.sh
+	git push origin HEAD:${CI_COMMIT_BRANCH}
+	git push --tags
 
 configure_git:
 	git config --global user.email ${GITLAB_USER_EMAIL}
