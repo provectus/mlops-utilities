@@ -43,7 +43,8 @@ publish-package:
   stage: deploy
   script:
     - $POETRY_HOME/bin/poetry poetry build
-    - $POETRY_HOME/bin/poetry poetry publish -r testpypi
+    # add -r testpypi for testing changes in CI
+    - $POETRY_HOME/bin/poetry poetry publish
   only:
       # TODO check that this is a version tag
     - tags
