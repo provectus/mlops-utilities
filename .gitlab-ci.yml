@@ -44,8 +44,6 @@ publish-package:
   script:
     - $POETRY_HOME/bin/poetry poetry build
     - $POETRY_HOME/bin/poetry poetry publish -r testpypi
-  when: manual
-  allow_failure: false
-  rules:
+  only:
       # TODO check that this is a version tag
-    - if: $CI_COMMIT_TAG
+    - tags
