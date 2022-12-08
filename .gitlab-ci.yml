@@ -18,9 +18,10 @@ stages:
 
 default:
   before_script:
+    - export POETRY_HOME=/opt/poetry
     - curl -sSL https://install.python-poetry.org | python3 - --version 1.2.2
-    - poetry config virtualenvs.create false
-    - poetry install
+    - $POETRY_HOME/bin/poetry config virtualenvs.create false
+    - $POETRY_HOME/bin/poetry install
 
 # run this manually on main branch
 bump-version:
@@ -39,8 +40,8 @@ test:
 publish-package:
   stage: deploy
   script:
-    - poetry build
-    - poetry publish -r testpypi
+    - $POETRY_HOME/bin/poetry poetry build
+    - $POETRY_HOME/bin/poetry poetry publish -r testpypi
   when: manual
   rules:
       # TODO check that this is a version tag
