@@ -22,6 +22,7 @@ default:
     - curl -sSL https://install.python-poetry.org | python3 - --version 1.2.2
     - $POETRY_HOME/bin/poetry config virtualenvs.create false
     - $POETRY_HOME/bin/poetry install
+    - make configure_git
 
 # run this manually on main branch
 bump-version:
