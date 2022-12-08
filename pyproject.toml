@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "mlops-utilities"
+version = "0.1.1"
+description = ""
+authors = ["Provectus Team <mlops@provectus.com>"]
+readme = "README.md"
+packages = [{include = "mlops_utilities"}]
+classifiers = [
+    "Operating System :: OS Independent"
+]
+
+[tool.poetry.dependencies]
+python = ">=3.8"
+sagemaker = "~2.112"
+boto3 = "~1.26"
+omegaconf = "~2.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
