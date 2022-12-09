@@ -153,7 +153,7 @@ def deploy_model(
 
     if len(endpoints) > 0:
         logger.info("Update current endpoint")
-        update_endpoint(sagemaker_client, endpoint_name, data_capture_config)
+        update_endpoint(sagemaker_client, instance_type, instance_count, endpoint_name, data_capture_config)
     else:
         logger.info("Create endpoint")
 
@@ -192,6 +192,8 @@ def compare_metrics(sagemaker_client,
 
 
 def update_endpoint(sagemaker_client,
+                    instance_type: str,
+                    instance_count: int,
                     endpoint_name: str,
                     data_capture_config: DataCaptureConfig,
                     model_statistics_s3_uri: str = None,
@@ -216,8 +218,8 @@ def update_endpoint(sagemaker_client,
 
     if require_update:
         predictor = Predictor(endpoint_name=endpoint_name)
-        predictor.update_endpoint(initial_instance_count=1,
-                                  instance_type='ml.m5.large',
+        predictor.update_endpoint(initial_instance_count=instance_count,
+                                  instance_type=instance_type,
                                   model_name=model_name)
         predictor.update_data_capture_config(data_capture_config)
     else:
