@@ -1,0 +1,4 @@
+fire==0.4.0
+pandas==1.5.0
+scikit-learn==1.1.2
+joblib

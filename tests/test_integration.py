@@ -2,6 +2,8 @@ import functools
 import unittest
 from unittest.mock import MagicMock
 
+import boto3
+
 from mlops_utilities.actions import create_endpoint, update_endpoint, compare_metrics
 from mlops_utilities import helpers
 
@@ -27,11 +29,10 @@ class TestPackageActions(unittest.TestCase):
     test_instance_type = 'ml.m5.large'
     test_role = 'arn:aws:iam::311638508164:role/AmazonSageMaker-ExecutionRole'
 
-    @mock_sagemaker_session
-    def test_get_approved_package(self, **kwargs):
-        sm_client = kwargs.pop("sm_client")
+    def test_get_approved_package(self):
+        sagemaker_client = boto3.client('sagemaker')
         model_package_group_name = 'test-Sokolov'
-        helpers.get_approved_package(sm_client, model_package_group_name)
+        helpers.get_approved_package(sagemaker_client, model_package_group_name)
 
     @mock_sagemaker_session
     def test_get_model_location(self, **kwargs):

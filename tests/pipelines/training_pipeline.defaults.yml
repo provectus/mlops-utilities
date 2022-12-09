@@ -1,0 +1,38 @@
+pipeline:
+  default_bucket: mlops-sagemaker-project
+  role: ${pipeline.role}
+  cache_config:
+    enable_caching: True
+    expire_after: p1d
+  model_package_group_name: ???
+
+preprocessing:
+  instance_count: 1
+  instance_type: ml.t3.2xlarge
+  role: ${pipeline.role}
+  caching:
+    enable: True
+    expire_after: 30d
+
+featurizing:
+  instance_count: 1
+  instance_type: ml.t3.medium
+  role: ${pipeline.role}
+
+training:
+  instance_count: 1
+  instance_type: ml.m5.large
+  role: ${pipeline.role}
+
+model:
+  instance_count: 1
+  instance_type: ml.m5.large
+  role: ${pipeline.role}
+
+clarify:
+  instance_count: 1
+  instance_type: ml.m5.large
+  role: ${pipeline.role}
+
+monitor:
+  role: ${pipeline.role}
