@@ -1,6 +1,6 @@
 test:
 	# TODO simplify for local runs
-	"${POETRY_HOME}/bin/poetry" run python3 -m unittest -v
+	pytest tests/test.py --junitxml=report.xml
 
 patch_version_up:
 	./bump_version.sh
