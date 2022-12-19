@@ -68,8 +68,7 @@ jobs:
 
       - name: Publish
         run: |
-          export PYPI_USERNAME=${{ secrets.PYPI_USERNAME }}
-          export PYPI_PASSWORD=${{ secrets.PYPI_PASSWORD }}
+          poetry config pypi-token.pypi ${{ secrets.PYPI_PASSWORD }}
           poetry publish
 
       - name: Git push
