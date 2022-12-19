@@ -4,6 +4,23 @@ on:
   pull_request:
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+    - run: |
+        python --version  # this will output 3.9 now
+        run tests or other things using python ...
+    - uses: marian-code/python-lint-annotate@v3
+      with:
+        python-root-list: "mlops_utilities/ tests/"
+        extra-pycodestyle-options: "--max-line-length=88"
+        use-pylint: true
+        python-version: "3.8"
+
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 10
