@@ -3,10 +3,12 @@
 .vscode
 .idea
 .env
+.pytest_cache
 instance/
 .webassets-cache
 __pycache__/
 *.py[cod]
+report.xml
 *$py.class
 *.egg-info/
 
