@@ -10,7 +10,7 @@ jobs:
     - uses: actions/checkout@v1
     - uses: actions/setup-python@v2
       with:
-        python-version: 3.8
+        python-version: 3.9
     - run: |
         python --version  # this will output 3.9 now
         run tests or other things using python ...
@@ -23,13 +23,9 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
     steps:
       - name: Checkout repo & prepearing
         uses: actions/checkout@v3
-
-      - name: Enforce timeout-minutes
-        uses: komiya-atsushi/action-enforce-timeout-minutes@v1.0.0
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
