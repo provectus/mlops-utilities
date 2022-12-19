@@ -24,6 +24,7 @@ jobs:
       - uses: snok/install-poetry@v1
         with:
           version: 1.2.2
+      - run: poetry install
 
       - name: Test with pytest
         run: |
