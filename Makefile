@@ -1,6 +1,6 @@
 test:
 	# TODO simplify for local runs
-	pytest tests/test.py --junitxml=report.xml
+	poetry run pytest tests/test.py --junitxml=report.xml
 
 patch_version_up:
 	./bump_version.sh
