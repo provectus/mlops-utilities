@@ -6,13 +6,9 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
     steps:
       - name: Checkout repo & prepearing
         uses: actions/checkout@v3
-
-      - name: Enforce timeout-minutes
-        uses: komiya-atsushi/action-enforce-timeout-minutes@v1.0.0
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -38,14 +34,10 @@ jobs:
 
   publish:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
     needs: [test]
     steps:
       - name: Checkout repo & prepearing
         uses: actions/checkout@v3
-
-      - name: Enforce timeout-minutes
-        uses: komiya-atsushi/action-enforce-timeout-minutes@v1.0.0
 
       - uses: snok/install-poetry@v1
         with:
