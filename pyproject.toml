@@ -14,6 +14,7 @@ python = ">=3.8"
 sagemaker = "~2.112"
 boto3 = "~1.26"
 omegaconf = "~2.2"
+pytest = "^7.0"
 
 [tool.poetry.optional-dependencies]
 tests = [
