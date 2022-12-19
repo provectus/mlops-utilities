@@ -68,8 +68,8 @@ jobs:
 
       - name: Publish
         run: |
-          poetry config pypi-token.pypi ${{ secrets.PYPI_PASSWORD }}
-          poetry publish
+          poetry config pypi-token.pypi "${{ secrets.PYPI_PASSWORD }}"
+          make publish
 
       - name: Git push
         uses: github-actions-x/commit@v2.9
