@@ -2,6 +2,15 @@ test:
 	# TODO simplify for local runs
 	poetry run pytest tests/test.py --junitxml=report.xml
 
+build:
+	poetry build
+
+publish:
+	poetry publish
+
+minor_version_up:
+	poetry version -n -s minor
+
 patch_version_up:
 	./bump_version.sh
 	git push origin HEAD:${CI_COMMIT_BRANCH}
