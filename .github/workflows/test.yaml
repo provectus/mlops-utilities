@@ -19,7 +19,7 @@ jobs:
         pip install pylint
 
     - name: Add pylint annotator
-      uses: jpy-git/pylint-pr-annotator@master
+      uses: jpy-git/pylint-pr-annotator@main
 
     - name: Run pylint
       run: |
