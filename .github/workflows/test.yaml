@@ -13,7 +13,7 @@ jobs:
         python-version: 3.8
     - uses: marian-code/python-lint-annotate@v3
       with:
-        python-root-list: "mlops_utilities/ tests/"
+        python-root-list: "mlops_utilities"
         extra-pycodestyle-options: "--max-line-length=88"
         use-pylint: true
         python-version: "3.8"
