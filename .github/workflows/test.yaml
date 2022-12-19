@@ -10,8 +10,29 @@ jobs:
     - name: Checkout repo & prepearing
       uses: actions/checkout@v1
 
+    - name: Set up Python environment
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.8"
+    - name: Generate requirements.txt file
+      run: |
+        pip install pipenv
+        pipenv requirements > requirements.txt
+
     - uses: marian-code/python-lint-annotate@v3
-    
+      with:
+          python-root-list: "./tests/*.py"
+          use-black: false
+          use-isort: false
+          use-mypy: false
+          use-pycodestyle: false
+          use-pydocstyle: false
+          extra-pycodestyle-options: "--max-line-length=88"
+          use-pylint: true
+          use-flake8: false
+          use-vulture: false
+          python-version: "3.8"
+
   test:
     runs-on: ubuntu-latest
     steps:
