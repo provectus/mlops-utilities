@@ -51,8 +51,6 @@ jobs:
       - name: Add env
         run: |
           PROJECT_VERSION=$(poetry version --short)
-          PYPI_USERNAME=${{ secrets.PYPI_USERNAME }}
-          PYPI_PASSWORD=${{ secrets.PYPI_PASSWORD }}
           echo "PROJECT_VERSION=$PROJECT_VERSION" >> $GITHUB_ENV
 
       - name: Build
@@ -70,7 +68,9 @@ jobs:
 
       - name: Publish
         run: |
-          make publish
+          export PYPI_USERNAME=${{ secrets.PYPI_USERNAME }}
+          export PYPI_PASSWORD=${{ secrets.PYPI_PASSWORD }}
+          poetry publish
 
       - name: Git push
         uses: github-actions-x/commit@v2.9
