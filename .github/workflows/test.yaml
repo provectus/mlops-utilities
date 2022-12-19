@@ -16,16 +16,19 @@ jobs:
         python-version: "3.8"
     - name: Install pylint
       run: |
-        pip install pylint
-
-    - name: Add pylint annotator
-      uses: pr-annotators/pylint-pr-annotator@v0.0.1
+        pip install pylint pylint_junit
 
     - name: Run pylint
       run: |
-        pylint mlops_utilities/
+        pylint --output-format=text,pylint_junit.JUnitReporter:lint_result.xml mlops_utilities/
+      
+    - name: Publish Test Report
+      uses: mikepenz/action-junit-report@v3
+      if: always() # always run even if the previous step fails
+      with:
+        report_paths: 'report.xml'
 
-  test:
+  unittest:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo & prepearing
