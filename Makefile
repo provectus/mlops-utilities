@@ -1,6 +1,15 @@
 test:
 	# TODO simplify for local runs
-	"${POETRY_HOME}/bin/poetry" run python3 -m unittest -v
+	poetry run pytest tests/test.py --junitxml=report.xml
+
+build:
+	poetry build
+
+publish:
+	poetry publish
+
+minor_version_up:
+	poetry version -n -s minor
 
 patch_version_up:
 	./bump_version.sh

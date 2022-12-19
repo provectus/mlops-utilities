@@ -1,5 +1,4 @@
 import functools
-import unittest
 from unittest.mock import MagicMock
 
 from mlops_utilities.actions import create_endpoint, update_endpoint, compare_metrics
@@ -22,7 +21,7 @@ def mock_sagemaker_session(f):
     return mock_sagemaker_session_
 
 
-class TestPackageActions(unittest.TestCase):
+class TestPackageActions:
     endpoint_name = 'TestEndpoint'
     test_instance_type = 'ml.m5.large'
     test_role = 'arn:aws:iam::311638508164:role/AmazonSageMaker-ExecutionRole'
