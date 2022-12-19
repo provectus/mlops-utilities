@@ -7,17 +7,11 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-    - uses: actions/setup-python@v2
-      with:
-        python-version: 3.8
-    - uses: marian-code/python-lint-annotate@v3
-      with:
-        python-root-list: "tests/*.py"
-        extra-pycodestyle-options: "--max-line-length=88"
-        use-pylint: true
-        python-version: "3.8"
+    - name: Checkout repo & prepearing
+      uses: actions/checkout@v1
 
+    - uses: marian-code/python-lint-annotate@v3
+    
   test:
     runs-on: ubuntu-latest
     steps:
