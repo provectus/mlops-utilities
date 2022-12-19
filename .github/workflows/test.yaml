@@ -10,10 +10,7 @@ jobs:
     - uses: actions/checkout@v1
     - uses: actions/setup-python@v2
       with:
-        python-version: 3.9
-    - run: |
-        python --version  # this will output 3.9 now
-        run tests or other things using python ...
+        python-version: 3.8
     - uses: marian-code/python-lint-annotate@v3
       with:
         python-root-list: "mlops_utilities/ tests/"
