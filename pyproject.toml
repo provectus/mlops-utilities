@@ -16,11 +16,6 @@ boto3 = "~1.26"
 omegaconf = "~2.2"
 pytest = "^7.0"
 
-[tool.poetry.optional-dependencies]
-tests = [
-  'pytest',
-]
-
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
