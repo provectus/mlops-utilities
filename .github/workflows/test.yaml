@@ -26,7 +26,7 @@ jobs:
       uses: mikepenz/action-junit-report@v3
       if: always() # always run even if the previous step fails
       with:
-        report_paths: 'report.xml'
+        report_paths: 'lint_result.xml'
 
   unittest:
     runs-on: ubuntu-latest
