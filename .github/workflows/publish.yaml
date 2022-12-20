@@ -70,11 +70,12 @@ jobs:
         run: |
           poetry config pypi-token.pypi "${{ secrets.PYPI_PASSWORD }}"
           make publish
-
+      
       - name: Git push
-        uses: github-actions-x/commit@v2.9
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          push-branch: 'main'
-          commit-message: '[skip ci] Version updated to ${{env.PROJECT_VERSION}}'
-          files: pyproject.toml
+        run: |
+          git remote set-url origin https://${{ secrets.GITHUB_TOKEN }}@github.com/provectus/mlops-utilities.git
+          git config --global user.name "github-actions"
+          git add pyproject.toml
+          git commit -m '[skip ci] Version updated to ${{env.PROJECT_VERSION}}'
+          git push -u origin HEAD:${{ github.ref  }}
+      
