@@ -8,13 +8,14 @@ build:
 publish:
 	poetry publish
 
+major_version_up:
+	poetry version -n -s major
+
 minor_version_up:
 	poetry version -n -s minor
 
 patch_version_up:
-	./bump_version.sh
-	git push origin HEAD:${CI_COMMIT_BRANCH}
-	git push --tags
+	poetry version -n -s patch
 
 configure_git:
 	git config --global user.email ${GITLAB_USER_EMAIL}

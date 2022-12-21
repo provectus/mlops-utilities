@@ -2,6 +2,14 @@ name: Publish
 
 on:
   workflow_dispatch:
+    inputs:
+        name:
+          type: choice
+          description: Select version format 
+          options: 
+            - minor
+            - patch
+            - major
 
 jobs:
   test:
@@ -44,9 +52,9 @@ jobs:
           version: 1.2.2
       - run: poetry install
 
-      - name: Minor version up
+      - name: Version up
         run: |
-          make minor_version_up
+          make "${{ github.event.inputs.name }}_version_up"
 
       - name: Add env
         run: |
