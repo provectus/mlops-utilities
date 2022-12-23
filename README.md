@@ -1,6 +1,18 @@
-# MLOps Utilities
+- [Intro](#intro)
+- [Installation](#installation)
+- [User Guide](#user-guide)
+  - [Concepts](#concepts)
+  - [\[NOT IMPLEMENTED\] The simplest case](#not-implemented-the-simplest-case)
+    - [You prepared / Project Structure:](#you-prepared--project-structure)
+    - [Library usage:](#library-usage)
+  - [\[NOT IMPLEMENTED\] The "simple" layout](#not-implemented-the-simple-layout)
+  - [The "default" layout](#the-default-layout)
+    - [You prepared / Project Structure:](#you-prepared--project-structure-1)
+    - [Structure of Pipeline Definition Script](#structure-of-pipeline-definition-script)
+    - [Component Structure and Environments](#component-structure-and-environments)
+    - [Library usage:](#library-usage-1)
 
-## Intro
+# Intro
 MLOps Utilities provides:
 - Implementation of high level operations most commonly occuring in workflows for production-ready ML models:
   - Dataset versioning
@@ -15,16 +27,16 @@ MLOps Utilities provides:
   - Model quality monitoring setup
 - In AWS cloud.
 
-## Installation
+# Installation
 `pip install mlops-utilities`
 
-## User Guide
-### Concepts
+# User Guide
+## Concepts
 This library simplifies MLOps workflow implementation by greatly reducing amount of boilerplate code and configuration required. It does so by relying on specific conventions for project structure  described below.
 
 Use cases are sorted by increasing complexity.
 
-### \[NOT IMPLEMENTED\] The simplest case
+## \[NOT IMPLEMENTED\] The simplest case
 You made a single Jupyter notebook that:
 * takes as input a training dataset location
 * preprocess data using Pandas
@@ -33,13 +45,13 @@ You made a single Jupyter notebook that:
 * uses one of the predefined kernels of Sagemaker Studio as an execution environment.
 * You have not changed this environment with `pip install`s. If you did then check the next use case.
 
-#### You prepared / Project Structure:
+### You prepared / Project Structure:
 ```
 <PROJECT_ROOT>
   |-- my_project07.ipynb
 ```
 
-#### Library usage:
+### Library usage:
 To build and deploy pipeline (in SageMaker) use the following CLI command:
 ```
 mlops upsert-pipeline TODO header of help description for this command
@@ -62,13 +74,13 @@ Training pipeline execution produces new model version in model registry. To dep
 mlops deploy-model TODO
 ```
 
-### \[NOT IMPLEMENTED\] The "simple" layout
+## \[NOT IMPLEMENTED\] The "simple" layout
 TODO - The same as default layout but without writing pipeline definition using SageMaker SDK.
 
-### The "default" layout
+## The "default" layout
 If you separated code of different pipeline steps and defined training pipeline using SageMaker SDK.
 
-#### You prepared / Project Structure:
+### You prepared / Project Structure:
 ```
 <PROJECT_ROOT>
   |-- components
@@ -84,11 +96,13 @@ If you separated code of different pipeline steps and defined training pipeline 
           |-- inference_pipeline.py
           |__ inference_pipeline.defaults.conf
 ```
-#### TODO describe pipeline definition structure
+### Structure of Pipeline Definition Script
+TODO
 
-#### TODO describe component implementations and environments
+### Component Structure and Environments
+TODO
 
-#### Library usage:
+### Library usage:
 To build and deploy pipeline (in SageMaker) use the following CLI command:
 ```
 mlops upsert-pipeline TODO header of help description for this command
