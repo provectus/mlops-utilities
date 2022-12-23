@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mlops-utilities"
-version = "0.2.0"
+version = "0.2.1"
 description = ""
 authors = ["Provectus Team <mlops@provectus.com>"]
 readme = "README.md"
