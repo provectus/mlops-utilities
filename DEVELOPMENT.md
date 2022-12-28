@@ -7,9 +7,8 @@
   - [Build \& Publish](#build--publish)
   - [How to import it in edit mode into other projects for development](#how-to-import-it-in-edit-mode-into-other-projects-for-development)
 - [CI/CD](#cicd)
-    - [Any commits](#any-commits)
-    - [Commits to `main`](#commits-to-main)
-    - [Tags](#tags)
+    - [Any pull request](#any-pull-request)
+    - [Manually Build and Publish packages](#manually-build-and-publish-packages-via-github-actions-workflow)
 
 # Development
 ## Required tools
@@ -63,7 +62,7 @@ See `path` dependency specification described [here](https://python-poetry.org/d
 Github Actions runs unit testing and lint testing
 
 ### Manually Build and Publish packages via Github Actions workflow
-Select Publish workflow -> Run workflow -> select version format for auto versioning (major, minor, path) :
+Select Publish workflow -> Run workflow -> select version format for auto versioning (major, minor, patch) :
 
 This workflow:
 * runs units testing
