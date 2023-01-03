@@ -1,3 +1,4 @@
+"""Sagemaker actions"""
 import json
 import logging
 from datetime import datetime
@@ -15,6 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 def upsert_pipeline(
+    *args,
     pipeline_module: str,
     pipeline_package: str,
     pipeline_name: str,
@@ -22,7 +24,6 @@ def upsert_pipeline(
     role: str,
     pipeline_tags: Optional[Dict[str, str]] = None,
     dryrun: bool = False,
-    *args,
 ) -> NoReturn:
     """
     Performs Sagemaker pipeline creating or updating.
@@ -106,8 +107,7 @@ def run_pipeline(
     }
     if dryrun:
         return start_pipe_args
-    else:
-        return sagemaker_client.start_pipeline_execution(**start_pipe_args)
+    return sagemaker_client.start_pipeline_execution(**start_pipe_args)
 
 
 def deploy_model(
@@ -138,7 +138,7 @@ def deploy_model(
         ModelPackageName=pck["ModelPackageArn"]
     )
 
-    logger.info(f"EndpointName= {endpoint_name}")
+    logger.info("EndpointName= %s",endpoint_name)
 
     endpoints = sagemaker_client.list_endpoints(NameContains=endpoint_name)["Endpoints"]
 

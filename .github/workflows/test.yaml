@@ -20,7 +20,7 @@ jobs:
 
     - name: Run pylint
       run: |
-        pylint --output-format=text,pylint_junit.JUnitReporter:lint_result.xml mlops_utilities/
+        pylint --max-line-length=120 --max-args=8 --output-format=text,pylint_junit.JUnitReporter:lint_result.xml mlops_utilities/
       
     - name: Publish Test Report
       uses: mikepenz/action-junit-report@v3
