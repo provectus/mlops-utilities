@@ -10,10 +10,11 @@ jobs:
     - name: Checkout repo & prepearing
       uses: actions/checkout@v1
 
-    - name: Set up Python environment
-      uses: actions/setup-python@v3
+    - uses: snok/install-poetry@v1
       with:
-        python-version: "3.8"
+        version: 1.2.2
+    - run: poetry install
+
     - name: Install pylint
       run: |
         pip install pylint pylint_junit
