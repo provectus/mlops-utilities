@@ -12,16 +12,16 @@ from sagemaker.model_monitor import DataCaptureConfig
 
 from mlops_utilities import helpers
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__).addHandler(logging.NullHandler())
 
 
 def upsert_pipeline(
-    *args,
     pipeline_module: str,
     pipeline_package: str,
     pipeline_name: str,
     config_type: str,
     role: str,
+    *args,
     pipeline_tags: Optional[Dict[str, str]] = None,
     dryrun: bool = False,
 ) -> NoReturn:
@@ -137,8 +137,8 @@ def deploy_model(
     model_description = sagemaker_client.describe_model_package(
         ModelPackageName=pck["ModelPackageArn"]
     )
-
-    logger.info("EndpointName= %s",endpoint_name)
+    if logger.isEnabledFor(logging.INFO):
+        logger.info("EndpointName= %s",endpoint_name)
 
     endpoints = sagemaker_client.list_endpoints(NameContains=endpoint_name)["Endpoints"]
 
@@ -147,11 +147,12 @@ def deploy_model(
         sampling_percentage=100,
         destination_s3_uri=data_capture_s3_uri,
     )
-
-    logger.info("Data capture enabled")
+    if logger.isEnabledFor(logging.INFO):
+        logger.info("Data capture enabled")
 
     if len(endpoints) > 0:
-        logger.info("Update current endpoint")
+        if logger.isEnabledFor(logging.INFO):
+            logger.info("Update current endpoint")
         update_endpoint(
             sagemaker_client,
             instance_type,
@@ -160,7 +161,8 @@ def deploy_model(
             data_capture_config,
         )
     else:
-        logger.info("Create endpoint")
+        if logger.isEnabledFor(logging.INFO):
+            logger.info("Create endpoint")
 
         model_package_arn = model_description["ModelPackageArn"]
         create_endpoint(
@@ -261,9 +263,10 @@ def update_endpoint(
         )
         predictor.update_data_capture_config(data_capture_config)
     else:
-        logger.info(
-            "Current endpoint is not updated because the new model have worse quality than current deployed model"
-        )
+        if logger.isEnabledFor(logging.INFO):
+            logger.info(
+                "Current endpoint is not updated because the new model have worse quality than current deployed model"
+            )
 
 
 def create_endpoint(
