@@ -222,8 +222,8 @@ def update_endpoint(
     instance_count: int,
     endpoint_name: str,
     data_capture_config: DataCaptureConfig,
-    model_statistics_s3_uri: str = None,
-    metric: str = None,
+    model_statistics_s3_uri: Optional[str] = None,
+    metric: Optional[str] = None,
     dryrun: bool = False,
 ) -> NoReturn:
     """
