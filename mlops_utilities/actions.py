@@ -241,7 +241,7 @@ def update_endpoint(
     )
     model_name = (
         endpoint_config_description["ProductionVariants"][0]["ModelName"]
-        if dryrun is False
+        if not dryrun
         else "model"
     )
     require_update = metric is None or (
