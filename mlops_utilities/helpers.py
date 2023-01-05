@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__).addHandler(logging.NullHandler())
 
 def get_pipeline_config(
     pipeline_module, config_type: str, pipeline_role: str, args: List
-) -> dictconfig:
+) -> dictconfig.DictConfig:
     """
     Read pipeline config
     :param pipeline_module: python module which includes pipeline
