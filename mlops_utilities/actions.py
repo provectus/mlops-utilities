@@ -7,8 +7,9 @@ from typing import Any, Dict, NoReturn, Optional
 
 import boto3
 from omegaconf import OmegaConf
-from sagemaker import ModelPackage, Predictor, Session
+from sagemaker import ModelPackage, Predictor
 from sagemaker.model_monitor import DataCaptureConfig
+from sagemaker.workflow.pipeline_context import PipelineSession
 
 from mlops_utilities import helpers
 
@@ -57,7 +58,7 @@ def upsert_pipeline(
 
     if logger.isEnabledFor(logging.INFO):
         logger.info("Result config:\n%s", OmegaConf.to_yaml(result_conf, resolve=True))
-    sm_session = Session(
+    sm_session = PipelineSession(
         default_bucket=OmegaConf.select(result_conf, "pipeline.default_bucket", default=None)
     )
 
@@ -80,7 +81,7 @@ def run_pipeline(
     execution_name_prefix: str,
     pipeline_params: Dict[str, Any],
     dryrun=False,
-) -> NoReturn:
+) -> str:
     """
     Performs Sagemaker pipeline running.
     !!! This pipeline should be created and should be uploaded to Sagemaaker.
@@ -102,16 +103,15 @@ def run_pipeline(
     start_pipe_args = {
         "PipelineName": pipeline_name,
         "PipelineExecutionDisplayName": pipe_exec_name,
-        "PipelineParameters": [{"Name": k, "Value": str(v)} for k, v in pipeline_params.items()],
-        "ClientRequestToken": helpers.ensure_min_length(pipe_exec_name, 32),
+        "PipelineParameters": helpers.convert_param_dict_to_key_value_list(pipeline_params),
     }
     if dryrun:
-        return start_pipe_args
+        return str(start_pipe_args)
     return sagemaker_client.start_pipeline_execution(**start_pipe_args)
 
 
 def deploy_model(
-    sagemaker_session: Session,
+    sagemaker_session: PipelineSession,
     model_package_group_name: str,
     instance_type: str,
     instance_count: int,
@@ -271,7 +271,7 @@ def update_endpoint(
 
 def create_endpoint(
     model_package_arn: str,
-    sagemaker_session: Session,
+    sagemaker_session: PipelineSession,
     instance_count: int,
     instance_type: str,
     endpoint_name: str,
