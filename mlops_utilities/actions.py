@@ -245,6 +245,8 @@ def update_endpoint(
     """
     Updating Sagemaker endpoint
     :param sagemaker_client: boto3_session_client(sagemaker)
+    :param instance_type
+    :param instance_count
     :param endpoint_name:
     :param data_capture_config: config for inference data capture
     :param model_statistics_s3_uri: s3 bucket which contains evaluation metrics
