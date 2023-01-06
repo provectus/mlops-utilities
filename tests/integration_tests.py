@@ -55,7 +55,7 @@ class TestPackageActions:
         endpoint_config_description = sm_client.describe_endpoint_config(
             EndpointConfigName=self.endpoint_name
         )
-        evaluate_s3 = "s3://sagemaker-mlops-p-sq33brxtdjtx/EvaluateAbaloneModel-f4800dc7aed96399c5afac406ea9afe0/output/evaluation/evaluation.json"
+        evaluate_s3 = ""
         metric_path = "regression_metrics/mse/value"
         compare_metrics(
             sagemaker_client=sm_client,
