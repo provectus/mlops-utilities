@@ -29,18 +29,18 @@ class TestPackageActions:
     @mock_sagemaker_session
     def test_get_approved_package(self, **kwargs):
         sm_client = kwargs.pop("sm_client")
-        model_package_group_name = "test-Sokolov"
+        model_package_group_name = "test-model-package-group"
         helpers.get_approved_package(sm_client, model_package_group_name)
 
     @mock_sagemaker_session
     def test_get_model_location(self, **kwargs):
         sm_client = kwargs.pop("sm_client")
-        helpers.get_model_location(sm_client, "test-Sokolov")
+        helpers.get_model_location(sm_client, "test-model-package-group")
 
     @mock_sagemaker_session
     def test_create_model_from_model_package(self, **kwargs):
         sm_client = kwargs.pop("sm_client")
-        model_package_arn = "arn:aws:sagemaker:us-east-1:123456789000:model-package/test-sokolov/1"
+        model_package_arn = "arn:aws:sagemaker:us-east-1:123456789000:model-package/test-model-package-group/1"
         helpers.create_model_from_model_package(
             sagemaker_client=sm_client,
             model_name="model",
@@ -69,7 +69,7 @@ class TestPackageActions:
     def test_create_endpoint(self, **kwargs):
         sm_client = kwargs.pop("sm_client")
         create_endpoint(
-            model_package_arn="arn:aws:sagemaker:us-east-1:123456789000:model-package/test-sokolov/1",
+            model_package_arn="arn:aws:sagemaker:us-east-1:123456789000:model-package/test-model-package-group/1",
             sagemaker_session=sm_client,
             instance_count=1,
             instance_type=self.test_instance_type,
