@@ -14,7 +14,7 @@ class TestPackageActions:
             pipeline_package="training_pipeline",
             pipeline_name="test_pipeline",
             config_type="training_pipeline.defaults",
-            role="arn:aws:iam::311638508164:role/AmazonSageMaker-ExecutionRole",
+            role="arn:aws:iam::123456789000:role/AmazonSageMaker-ExecutionRole",
             dryrun=True,
         )
 
@@ -59,12 +59,12 @@ class TestHelpers:
 
     def test_get_model_name(self):
         test_model_arn = (
-            "arn:aws:sagemaker:us-east-1:311638508164:model-package-group/framework-version"
+            "arn:aws:sagemaker:us-east-1:123456789000:model-package-group/framework-version"
         )
         assert helpers.get_model_name(test_model_arn) == "framework-version"
 
     def test_get_job_name(self):
-        test_job_arn = "arn:aws:sagemaker:us-east-1:311638508164:processing-job/pipelines-joqqfahmal9e-splitdataset-ikz14ulv8j"
+        test_job_arn = "arn:aws:sagemaker:us-east-1:123456789000:processing-job/pipelines-joqqfahmal9e-splitdataset-ikz14ulv8j"
         assert (
             helpers.get_job_name(test_job_arn) == "pipelines-joqqfahmal9e-splitdataset-ikz14ulv8j"
         )
