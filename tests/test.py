@@ -1,9 +1,10 @@
-import string
-import pytest
 import random
+import string
+
+import pytest
 
 from mlops_utilities import helpers
-from mlops_utilities.actions import upsert_pipeline, run_pipeline
+from mlops_utilities.actions import run_pipeline, upsert_pipeline
 
 
 class TestPackageActions:
@@ -58,15 +59,14 @@ class TestHelpers:
         assert helpers.get_value_from_dict(test_dict, path) == 4.9
 
     def test_get_model_name(self):
-        test_model_arn = (
-            "arn:aws:sagemaker:us-east-1:123456789000:model-package-group/framework-version"
-        )
+        test_model_arn = "arn:aws:sagemaker:us-east-1:123456789000:model-package-group/framework-version"
         assert helpers.get_model_name(test_model_arn) == "framework-version"
 
     def test_get_job_name(self):
         test_job_arn = "arn:aws:sagemaker:us-east-1:123456789000:processing-job/pipelines-joqqfahmal9e-splitdataset-ikz14ulv8j"
         assert (
-            helpers.get_job_name(test_job_arn) == "pipelines-joqqfahmal9e-splitdataset-ikz14ulv8j"
+            helpers.get_job_name(test_job_arn)
+            == "pipelines-joqqfahmal9e-splitdataset-ikz14ulv8j"
         )
 
     def test_ensure_min_length(self):

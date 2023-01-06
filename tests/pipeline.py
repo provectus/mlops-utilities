@@ -1,10 +1,12 @@
-from sagemaker.workflow.pipeline_context import PipelineSession
 from omegaconf.dictconfig import DictConfig
-from sagemaker.workflow.pipeline import Pipeline
-from sagemaker.workflow.steps import ProcessingStep
+from sagemaker.workflow.pipeline import Pipeline  # type: ignore
+from sagemaker.workflow.pipeline_context import PipelineSession  # type: ignore
+from sagemaker.workflow.steps import ProcessingStep  # type: ignore
 
 
-def get_pipeline(sm_session: PipelineSession, pipeline_name: str, conf: DictConfig) -> Pipeline:
+def get_pipeline(
+    sm_session: PipelineSession, pipeline_name: str, conf: DictConfig
+) -> Pipeline:
 
     return Pipeline(
         name=pipeline_name,

@@ -13,7 +13,7 @@ from sagemaker.workflow.pipeline_context import PipelineSession
 
 from mlops_utilities import helpers
 
-logger = logging.getLogger(__name__).addHandler(logging.NullHandler())
+logger = logging.getLogger(__name__)
 
 
 def upsert_pipeline(
@@ -54,16 +54,22 @@ def upsert_pipeline(
         must follow dot-notation (https://omegaconf.readthedocs.io/en/2.0_branch/usage.html#from-a-dot-list)
     """
     pipeline_module = import_module(f"{pipeline_module}.{pipeline_package}")
-    result_conf = helpers.get_pipeline_config(pipeline_module, config_type, role, list(args))
+    result_conf = helpers.get_pipeline_config(
+        pipeline_module, config_type, role, list(args)
+    )
 
     if logger.isEnabledFor(logging.INFO):
         logger.info("Result config:\n%s", OmegaConf.to_yaml(result_conf, resolve=True))
     sm_session = PipelineSession(
-        default_bucket=OmegaConf.select(result_conf, "pipeline.default_bucket", default=None)
+        default_bucket=OmegaConf.select(
+            result_conf, "pipeline.default_bucket", default=None
+        )
     )
 
     pipeline_name = helpers.normalize_pipeline_name(pipeline_name)
-    pipeline_object = pipeline_module.get_pipeline(sm_session, pipeline_name, result_conf)
+    pipeline_object = pipeline_module.get_pipeline(
+        sm_session, pipeline_name, result_conf
+    )
     if logger.isEnabledFor(logging.INFO):
         logger.info(
             "Pipeline definition:\n%s",
@@ -103,7 +109,9 @@ def run_pipeline(
     start_pipe_args = {
         "PipelineName": pipeline_name,
         "PipelineExecutionDisplayName": pipe_exec_name,
-        "PipelineParameters": helpers.convert_param_dict_to_key_value_list(pipeline_params),
+        "PipelineParameters": helpers.convert_param_dict_to_key_value_list(
+            pipeline_params
+        ),
     }
     if dryrun:
         return str(start_pipe_args)
@@ -138,7 +146,7 @@ def deploy_model(
         ModelPackageName=pck["ModelPackageArn"]
     )
     if logger.isEnabledFor(logging.INFO):
-        logger.info("EndpointName= %s",endpoint_name)
+        logger.info("EndpointName= %s", endpoint_name)
 
     endpoints = sagemaker_client.list_endpoints(NameContains=endpoint_name)["Endpoints"]
 
@@ -200,19 +208,27 @@ def compare_metrics(
     )
     test_json_metrics = {"regression_metrics": {"mse": {"value": 4}}}
     new_model_metrics = (
-        test_json_metrics if dryrun else helpers.load_json_from_s3(model_statistics_s3_uri)
+        test_json_metrics
+        if dryrun
+        else helpers.load_json_from_s3(model_statistics_s3_uri)
     )
     old_model_metrics = (
         test_json_metrics
         if dryrun
         else helpers.load_json_from_s3(
-            model_deployed_description["ModelMetrics"]["ModelQuality"]["Statistics"]["S3Uri"]
+            model_deployed_description["ModelMetrics"]["ModelQuality"]["Statistics"][
+                "S3Uri"
+            ]
         )
     )
     metric_path = metric.split("/")
 
-    new_metric = helpers.get_value_from_dict(new_model_metrics, metric_path[:-1])[metric_path[-1]]
-    old_metric = helpers.get_value_from_dict(old_model_metrics, metric_path[:-1])[metric_path[-1]]
+    new_metric = helpers.get_value_from_dict(new_model_metrics, metric_path[:-1])[
+        metric_path[-1]
+    ]
+    old_metric = helpers.get_value_from_dict(old_model_metrics, metric_path[:-1])[
+        metric_path[-1]
+    ]
     return new_metric >= old_metric
 
 

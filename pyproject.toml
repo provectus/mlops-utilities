@@ -19,6 +19,7 @@ pytest = "7.2.0"
 [tool.poetry.group.dev.dependencies]
 pylint = "^2.15.9"
 pylint-junit = "^0.3.2"
+black = "^22.12.0"
 
 [build-system]
 requires = ["poetry-core"]

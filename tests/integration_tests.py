@@ -1,8 +1,8 @@
 import functools
 from unittest.mock import MagicMock
 
-from mlops_utilities.actions import create_endpoint, update_endpoint, compare_metrics
 from mlops_utilities import helpers
+from mlops_utilities.actions import compare_metrics, create_endpoint, update_endpoint
 
 
 def mock_sagemaker_session(f):

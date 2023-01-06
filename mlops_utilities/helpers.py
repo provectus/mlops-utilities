@@ -7,13 +7,13 @@ from functools import reduce
 from pathlib import Path
 from typing import Any, Dict, List, Mapping
 
-import boto3
-from botocore.client import BaseClient
+import boto3  # type: ignore
+from botocore.client import BaseClient  # type: ignore
 from omegaconf import OmegaConf, dictconfig
 
 # Sagemaker dependent methods
 
-logger = logging.getLogger(__name__).addHandler(logging.NullHandler())
+logger = logging.getLogger(__name__)
 
 
 def get_pipeline_config(
@@ -34,16 +34,16 @@ def get_pipeline_config(
     return OmegaConf.merge(default_conf, arg_conf, override_arg_conf)
 
 
-def get_output_destination( sagemaker_client: BaseClient,
-                            processing_job_arn: str,
-                            output_name: str ) -> str:
+def get_output_destination(
+    sagemaker_client: BaseClient, processing_job_arn: str, output_name: str
+) -> str:
     """
-        Get the S3 URI of the output destination for a processing job.
+    Get the S3 URI of the output destination for a processing job.
 
-        :param sagemaker_client: An instance of `boto3.client("sagemaker")`.
-        :param processing_job_arn: The ARN of the processing job.
-        :param output_name: The name of the output.
-        :return: The S3 URI of the output destination.
+    :param sagemaker_client: An instance of `boto3.client("sagemaker")`.
+    :param processing_job_arn: The ARN of the processing job.
+    :param output_name: The name of the output.
+    :return: The S3 URI of the output destination.
     """
     pj_output_dict = _list_to_dict(
         sagemaker_client.describe_processing_job(
@@ -54,8 +54,7 @@ def get_output_destination( sagemaker_client: BaseClient,
     return pj_output_dict[output_name]["S3Output"]["S3Uri"]
 
 
-def get_model_location( sagemaker_client: BaseClient,
-                        model_name: str ) -> str:
+def get_model_location(sagemaker_client: BaseClient, model_name: str) -> str:
     """
     Get the S3 URI of a model.
 
@@ -67,8 +66,9 @@ def get_model_location( sagemaker_client: BaseClient,
     return model_desc["PrimaryContainer"]["ModelDataUrl"]
 
 
-def get_approved_package( sagemaker_client: BaseClient,
-                          model_package_group_name: str ) -> Dict[str, Any]:
+def get_approved_package(
+    sagemaker_client: BaseClient, model_package_group_name: str
+) -> Dict[str, Any]:
     """
     Get the most recent approved model package in a model package group.
 
@@ -94,7 +94,7 @@ def get_approved_package( sagemaker_client: BaseClient,
     return model_packages[0]
 
 
-def load_json_from_s3( s3_uri: str ) -> Dict:
+def load_json_from_s3(s3_uri: str) -> Dict:
     """
     Load a JSON file from an S3 bucket and return the contents as a dictionary.
 
@@ -113,7 +113,7 @@ def create_model_from_model_package(
     model_name: str,
     model_package_arn: str,
     execution_role: str,
-    tags: List[Dict[str, str]]
+    tags: List[Dict[str, str]],
 ) -> str:
     """
     Create a model from a model package and return the model ARN.
@@ -137,7 +137,7 @@ def create_model_from_model_package(
 # Common methods
 
 
-def get_datetime_str( date_time: datetime ) -> str:
+def get_datetime_str(date_time: datetime) -> str:
     """
     Convert datetime to string
     :param date_time:
@@ -146,7 +146,9 @@ def get_datetime_str( date_time: datetime ) -> str:
     return date_time.strftime("%Y-%m-%d-%H-%M-%S")
 
 
-def convert_param_dict_to_key_value_list( arg_dict: Dict[str, str] ) -> List[Dict[str, str]]:
+def convert_param_dict_to_key_value_list(
+    arg_dict: Dict[str, str]
+) -> List[Dict[str, str]]:
     """
     Convert python dict to Sagemaker SDK resource tags structure
     where dict key corresponds to "Key", dict value corresponds to "Value".
@@ -156,7 +158,7 @@ def convert_param_dict_to_key_value_list( arg_dict: Dict[str, str] ) -> List[Dic
     return [{"Key": k, "Value": v} for k, v in arg_dict.items()]
 
 
-def get_value_from_dict( data_dict: Dict[str, Any], path: List[str] ) -> Mapping:
+def get_value_from_dict(data_dict: Dict[str, Any], path: List[str]) -> Mapping:
     """
     Get necessary metric from evaluation.json
     :param data_dict: dictionary that contains metrics {"regression_metrics": {"mse":..}}
@@ -164,10 +166,10 @@ def get_value_from_dict( data_dict: Dict[str, Any], path: List[str] ) -> Mapping
     :return: dictionary that contains target metric:
     for example {mse: 2.1} --from--> { "Key 01": { "Key 02:…{mse: 2.1}"}
     """
-    return reduce( operator.getitem, path, data_dict )
+    return reduce(operator.getitem, path, data_dict)
 
 
-def normalize_key( key: str ) -> str:
+def normalize_key(key: str) -> str:
     """
     Remove _ from keys and lower case it
     :param key:
@@ -176,7 +178,7 @@ def normalize_key( key: str ) -> str:
     return key.replace("_", "").lower()
 
 
-def get_model_name( model_arn: str ) -> str:
+def get_model_name(model_arn: str) -> str:
     """
     Get model name from ARN
     :param model_arn:
@@ -185,7 +187,7 @@ def get_model_name( model_arn: str ) -> str:
     return model_arn[model_arn.rindex("/") + 1 :]
 
 
-def get_job_name( job_arn: str ) -> str:
+def get_job_name(job_arn: str) -> str:
     """
     Get job name from ARN
     :param job_arn:
@@ -194,7 +196,9 @@ def get_job_name( job_arn: str ) -> str:
     return job_arn[job_arn.rindex("/") + 1 :]
 
 
-def _list_to_dict( arg_list: List[Dict[str, Any]], dict_key_attr: str ) -> Dict[Any, Dict]:
+def _list_to_dict(
+    arg_list: List[Dict[str, Any]], dict_key_attr: str
+) -> Dict[Any, Dict]:
     """
     List to Dict
     :param arg_list:
@@ -204,7 +208,7 @@ def _list_to_dict( arg_list: List[Dict[str, Any]], dict_key_attr: str ) -> Dict[
     return {o[dict_key_attr]: o for o in arg_list}
 
 
-def ensure_min_length( argument: str, min_length: int ) -> str:
+def ensure_min_length(argument: str, min_length: int) -> str:
     """
     Add 0's to fulfill min length
     :param argument:
@@ -216,7 +220,7 @@ def ensure_min_length( argument: str, min_length: int ) -> str:
     return argument
 
 
-def normalize_pipeline_name( name: str, name_max_len: int = 82 ) -> str:
+def normalize_pipeline_name(name: str, name_max_len: int = 82) -> str:
     """
     max len checker
     :param name:
