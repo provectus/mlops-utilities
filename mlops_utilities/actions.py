@@ -119,7 +119,7 @@ def run_pipeline(
 
 
 def deploy_model(
-    sagemaker_session: PipelineSession,
+    sagemaker_pipeline_session: PipelineSession,
     model_package_group_name: str,
     instance_type: str,
     instance_count: int,
@@ -129,7 +129,7 @@ def deploy_model(
 ) -> NoReturn:
     """
     Method deploys model to Sagemaker
-    :param sagemaker_session: Sagemaker session
+    :param sagemaker_pipeline_session: Sagemaker Pipeline Session
     :param model_package_group_name: destination model package of deploying
     :param instance_type: instance types on which the model is deployed
     :param instance_count: amount of instances on which the model is deployed
@@ -139,7 +139,7 @@ def deploy_model(
     """
     instance_count = int(instance_count)
 
-    sagemaker_client = sagemaker_session.sagemaker_client
+    sagemaker_client = sagemaker_pipeline_session.sagemaker_client
 
     pck = helpers.get_approved_package(sagemaker_client, model_package_group_name)
     model_description = sagemaker_client.describe_model_package(
@@ -175,7 +175,7 @@ def deploy_model(
         model_package_arn = model_description["ModelPackageArn"]
         create_endpoint(
             model_package_arn,
-            sagemaker_session,
+            sagemaker_pipeline_session,
             instance_count,
             instance_type,
             endpoint_name,
@@ -289,7 +289,7 @@ def update_endpoint(
 
 def create_endpoint(
     model_package_arn: str,
-    sagemaker_session: PipelineSession,
+    sagemaker_pipeline_session: PipelineSession,
     instance_count: int,
     instance_type: str,
     endpoint_name: str,
@@ -299,7 +299,7 @@ def create_endpoint(
     """
     It executes endpoint creation into Sagemaker
     :param model_package_arn: model package descriptor
-    :param sagemaker_session: Sagemaker session
+    :param sagemaker_pipeline_session: Sagemaker Pipeline Session
     :param instance_count: amount of instances on which the model is deployed
     :param instance_type: instance types on which the model is deployed
     :param endpoint_name: endpoint name as string
@@ -310,7 +310,7 @@ def create_endpoint(
     model = ModelPackage(
         role=role,
         model_package_arn=model_package_arn,
-        sagemaker_session=sagemaker_session,
+        sagemaker_session=sagemaker_pipeline_session,
     )
 
     model.deploy(
