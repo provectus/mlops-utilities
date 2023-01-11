@@ -7,9 +7,8 @@
   - [Build \& Publish](#build--publish)
   - [How to import it in edit mode into other projects for development](#how-to-import-it-in-edit-mode-into-other-projects-for-development)
 - [CI/CD](#cicd)
-    - [Any commits](#any-commits)
-    - [Commits to `main`](#commits-to-main)
-    - [Tags](#tags)
+    - [Any pull request](#any-pull-request)
+    - [Manually Build and Publish packages](#manually-build-and-publish-packages-via-github-actions-workflow)
 
 # Development
 ## Required tools
@@ -59,21 +58,17 @@ Congrats!
 See `path` dependency specification described [here](https://python-poetry.org/docs/dependency-specification/#path-dependencies).
 
 # CI/CD
-### Any commits
-For each commit GitLab CI runs units testing.
+### Any pull request
+Github Actions runs unit testing and lint testing
 
-### Commits to `main`
-Commiting and merging to `main` branch:
-* creates GitLab CI pipeline execution in blocked state
-* that is expected to be manually unblocked in [GitLab UI](https://gitlab.provectus.com/mldemo/mlops-platform/mlops-utilities/-/pipelines)
-* by running `bump-version` job there.
+### Manually Build and Publish packages via Github Actions workflow
+Select Publish workflow -> Run workflow -> select version format for auto versioning (major, minor, patch) :
 
-This job:
+This workflow:
+* runs units testing
 * invokes poetry to increase version
+* invokes poetry to build package
+* creates tag and releases with a new version
+* invokes poetry to publish package
 * commits these changes
-* git tag with a new version
 * and pushes all of these to the git repo.
-
-### Tags
-Tags trigger another job in the Gitlab CI pipeline - building and publishing the package version to PyPI.
-
