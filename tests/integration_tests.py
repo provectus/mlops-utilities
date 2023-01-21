@@ -70,7 +70,7 @@ class TestPackageActions:
         sm_client = kwargs.pop("sm_client")
         create_endpoint(
             model_package_arn="arn:aws:sagemaker:us-east-1:123456789000:model-package/test-model-package-group/1",
-            sagemaker_pipeline_session=sm_client,
+            sagemaker_session=sm_client,
             instance_count=1,
             instance_type=self.test_instance_type,
             endpoint_name=self.endpoint_name,
