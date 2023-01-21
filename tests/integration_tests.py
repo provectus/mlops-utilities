@@ -24,7 +24,7 @@ def mock_sagemaker_session(f):
 class TestPackageActions:
     endpoint_name = "TestEndpoint"
     test_instance_type = "ml.m5.large"
-    test_role = "arn:aws:iam::311638508164:role/AmazonSageMaker-ExecutionRole"
+    test_role = "arn:aws:iam::123456789000:role/AmazonSageMaker-ExecutionRole"
 
     @mock_sagemaker_session
     def test_get_approved_package(self, **kwargs):
