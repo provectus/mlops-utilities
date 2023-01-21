@@ -295,7 +295,7 @@ def create_endpoint(
     endpoint_name: str,
     data_capture_config: DataCaptureConfig,
     role: str,
-) -> NoReturn:
+) -> None:
     """
     It executes endpoint creation into Sagemaker
     :param model_package_arn: model package descriptor
@@ -305,7 +305,7 @@ def create_endpoint(
     :param endpoint_name: endpoint name as string
     :param data_capture_config: config for inference data capture
     :param role: execution IAM role
-    :return:
+    :return: None
     """
     model = ModelPackage(
         role=role,

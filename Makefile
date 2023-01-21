@@ -3,7 +3,7 @@ format-python:
 	poetry run black --target-version py38 mlops_utilities/ tests/
 
 lint:
-	poetry run pylint --max-line-length=120 --max-args=8 --output-format=text,pylint_junit.JUnitReporter:lint_result.xml mlops_utilities/
+	poetry run pylint --rcfile pyproject.toml --output-format=text,pylint_junit.JUnitReporter:lint_result.xml mlops_utilities/
 	poetry run black --check mlops_utilities tests
 test:
 	# TODO simplify for local runs
