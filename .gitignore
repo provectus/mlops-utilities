@@ -1,18 +1,13 @@
-.python-version
 .DS_STORE
 .vscode
 .idea
 .env
-.pytest_cache
-.mypy_cache
 instance/
 .webassets-cache
 __pycache__/
 *.py[cod]
-report.xml
 *$py.class
 *.egg-info/
-lint_result.xml
 
 dist/
 venv/

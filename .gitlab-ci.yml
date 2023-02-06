@@ -12,39 +12,33 @@ variables:
   DOCKER_TLS_CERTDIR: ""
 
 stages:
-  - build
-  - test
   - deploy
-
-default:
-  before_script:
-    - export POETRY_HOME=/opt/poetry
-    - curl -sSL https://install.python-poetry.org | python3 - --version 1.2.2
-    - $POETRY_HOME/bin/poetry config virtualenvs.create false
-    - $POETRY_HOME/bin/poetry install
-    - make configure_git
-
-# run this manually on main branch
-bump-version:
-  stage: build
-  script:
-    - make patch_version_up
-  when: manual
-  allow_failure: false
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main"
+  - test
 
 test:
   stage: test
   script:
-    - make test
+    - pip3 install awscli --upgrade
+    - make setup_pip
+    - pip3 install mlops-utilities
+    - python3 -m unittest
+  needs:
+    - job: build-package
+      optional: true
+  only:
+    # TODO master
+    - dev
 
-publish-package:
+build-package:
   stage: deploy
   script:
-    - $POETRY_HOME/bin/poetry poetry build
-    # add -r testpypi for testing changes in CI
-    - $POETRY_HOME/bin/poetry poetry publish
+    - pip3 install awscli --upgrade
+    - aws codeartifact login --tool twine --repository pypi-store --domain ${CA_DOMAIN_NAME} --domain-owner ${CA_DOMAIN_OWNER}
+    - pip3 install twine
+    - make minor_version_up
+    - export PACKAGE_VERSION=`cat version` && python3 setup.py bdist_wheel
+    - twine upload --repository codeartifact dist/mlops_utilities-"`cat version`"-py3-none-any.whl
+  when: manual
   only:
-      # TODO check that this is a version tag
-    - tags
+    # TODO master
+    - dev
