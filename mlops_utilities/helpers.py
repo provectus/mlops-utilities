@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 def get_pipeline_config(
-    pipeline_module, config_type: str, pipeline_role: str, args: List
+    pipeline_module, config_type: str, pipeline_role: str, **kwargs
 ) -> dictconfig.DictConfig:
     """
     Read pipeline config
@@ -30,7 +30,7 @@ def get_pipeline_config(
     default_conf_path = f"{Path(pipeline_module.__file__).parent}/{config_type}.yml"
     default_conf = OmegaConf.load(default_conf_path)
     arg_conf = OmegaConf.create({"pipeline": {"role": pipeline_role}})
-    override_arg_conf = OmegaConf.from_dotlist(args)
+    override_arg_conf = OmegaConf.from_dotlist([f"pipeline.{k}={v}" for k, v in kwargs.items()])
     return OmegaConf.merge(default_conf, arg_conf, override_arg_conf)
 
 
