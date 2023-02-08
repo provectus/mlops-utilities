@@ -155,7 +155,7 @@ def convert_param_dict_to_key_value_list(
     :param arg_dict: key-value need to convert to AWS resource tags structure
     :return: list of tags in the following format: [ { "Key": "...", "Value": "..." }, ... ]
     """
-    return [{"Key": k, "Value": v} for k, v in arg_dict.items()]
+    return [{"Name": k, "Value": v} for k, v in arg_dict.items()]
 
 
 def get_value_from_dict(data_dict: Dict[str, Any], path: List[str]) -> Mapping:
