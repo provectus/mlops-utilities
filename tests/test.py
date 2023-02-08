@@ -48,10 +48,23 @@ class TestHelpers:
                 "key_3": "1",
             }
         ) == [
-            {"Name": "key_1", "Value": "v"},
-            {"Name": "key_2", "Value": "vv"},
-            {"Name": "key_3", "Value": "1"},
-        ]
+                   {"Key": "key_1", "Value": "v"},
+                   {"Key": "key_2", "Value": "vv"},
+                   {"Key": "key_3", "Value": "1"},
+               ]
+
+    def test_convert_param_dict_to_name_value_list_correct_input(self):
+        assert helpers.convert_param_dict_to_name_value_list(
+            {
+                "key_1": "v",
+                "key_2": "vv",
+                "key_3": "1",
+            }
+        ) == [
+                   {"Name": "key_1", "Value": "v"},
+                   {"Name": "key_2", "Value": "vv"},
+                   {"Name": "key_3", "Value": "1"},
+               ]
 
     def test_get_value_from_dict(self):
         test_dict = {"regression_metrics": {"mse": {"value": 4.9}}}
@@ -65,8 +78,8 @@ class TestHelpers:
     def test_get_job_name(self):
         test_job_arn = "arn:aws:sagemaker:us-east-1:123456789000:processing-job/pipelines-joqqfahmal9e-splitdataset-ikz14ulv8j"
         assert (
-            helpers.get_job_name(test_job_arn)
-            == "pipelines-joqqfahmal9e-splitdataset-ikz14ulv8j"
+                helpers.get_job_name(test_job_arn)
+                == "pipelines-joqqfahmal9e-splitdataset-ikz14ulv8j"
         )
 
     def test_ensure_min_length(self):

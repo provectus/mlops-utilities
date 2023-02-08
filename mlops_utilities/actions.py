@@ -109,7 +109,7 @@ def run_pipeline(
     start_pipe_args = {
         "PipelineName": pipeline_name,
         "PipelineExecutionDisplayName": pipe_exec_name,
-        "PipelineParameters": helpers.convert_param_dict_to_key_value_list(
+        "PipelineParameters": helpers.convert_param_dict_to_name_value_list(
             pipeline_params
         ),
     }

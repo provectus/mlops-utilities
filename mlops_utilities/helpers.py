@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 def get_pipeline_config(
-    pipeline_module, config_type: str, pipeline_role: str, args: List
+        pipeline_module, config_type: str, pipeline_role: str, args: List
 ) -> dictconfig.DictConfig:
     """
     Read pipeline config
@@ -35,7 +35,7 @@ def get_pipeline_config(
 
 
 def get_output_destination(
-    sagemaker_client: BaseClient, processing_job_arn: str, output_name: str
+        sagemaker_client: BaseClient, processing_job_arn: str, output_name: str
 ) -> str:
     """
     Get the S3 URI of the output destination for a processing job.
@@ -67,7 +67,7 @@ def get_model_location(sagemaker_client: BaseClient, model_name: str) -> str:
 
 
 def get_approved_package(
-    sagemaker_client: BaseClient, model_package_group_name: str
+        sagemaker_client: BaseClient, model_package_group_name: str
 ) -> Dict[str, Any]:
     """
     Get the most recent approved model package in a model package group.
@@ -109,11 +109,11 @@ def load_json_from_s3(s3_uri: str) -> Dict:
 
 
 def create_model_from_model_package(
-    sagemaker_client: BaseClient,
-    model_name: str,
-    model_package_arn: str,
-    execution_role: str,
-    tags: List[Dict[str, str]],
+        sagemaker_client: BaseClient,
+        model_name: str,
+        model_package_arn: str,
+        execution_role: str,
+        tags: List[Dict[str, str]],
 ) -> str:
     """
     Create a model from a model package and return the model ARN.
@@ -147,7 +147,19 @@ def get_datetime_str(date_time: datetime) -> str:
 
 
 def convert_param_dict_to_key_value_list(
-    arg_dict: Dict[str, str]
+        arg_dict: Dict[str, str]
+) -> List[Dict[str, str]]:
+    """
+    Convert python dict to Sagemaker SDK resource tags structure
+    where dict key corresponds to "Name", dict value corresponds to "Value".
+    :param arg_dict: key-value need to convert to AWS resource tags structure
+    :return: list of tags in the following format: [ { "Key": "...", "Value": "..." }, ... ]
+    """
+    return [{"Key": k, "Value": v} for k, v in arg_dict.items()]
+
+
+def convert_param_dict_to_name_value_list(
+        arg_dict: Dict[str, str]
 ) -> List[Dict[str, str]]:
     """
     Convert python dict to Sagemaker SDK resource tags structure
@@ -155,7 +167,7 @@ def convert_param_dict_to_key_value_list(
     :param arg_dict: key-value need to convert to AWS resource tags structure
     :return: list of tags in the following format: [ { "Name": "...", "Value": "..." }, ... ]
     """
-    return [{"Name": k, "Value": v} for k, v in arg_dict.items()]
+    return [{"Name": str(k), "Value": str(v)} for k, v in arg_dict.items()]
 
 
 def get_value_from_dict(data_dict: Dict[str, Any], path: List[str]) -> Mapping:
@@ -184,7 +196,7 @@ def get_model_name(model_arn: str) -> str:
     :param model_arn:
     :return model name:
     """
-    return model_arn[model_arn.rindex("/") + 1 :]
+    return model_arn[model_arn.rindex("/") + 1:]
 
 
 def get_job_name(job_arn: str) -> str:
@@ -193,11 +205,11 @@ def get_job_name(job_arn: str) -> str:
     :param job_arn:
     :return job name:
     """
-    return job_arn[job_arn.rindex("/") + 1 :]
+    return job_arn[job_arn.rindex("/") + 1:]
 
 
 def _list_to_dict(
-    arg_list: List[Dict[str, Any]], dict_key_attr: str
+        arg_list: List[Dict[str, Any]], dict_key_attr: str
 ) -> Dict[Any, Dict]:
     """
     List to Dict
@@ -239,8 +251,8 @@ def normalize_pipeline_name(name: str, name_max_len: int = 82) -> str:
 
 
 def _generate_data_capture_config(
-    s3_destination_prefix: str,
-    sampling_percentage: int = 100,
+        s3_destination_prefix: str,
+        sampling_percentage: int = 100,
 ) -> Dict[str, Any]:
     """
     Create Data Capture config from params
