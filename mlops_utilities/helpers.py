@@ -151,11 +151,11 @@ def convert_param_dict_to_key_value_list(
 ) -> List[Dict[str, str]]:
     """
     Convert python dict to Sagemaker SDK resource tags structure
-    where dict key corresponds to "Key", dict value corresponds to "Value".
+    where dict key corresponds to "Name", dict value corresponds to "Value".
     :param arg_dict: key-value need to convert to AWS resource tags structure
-    :return: list of tags in the following format: [ { "Key": "...", "Value": "..." }, ... ]
+    :return: list of tags in the following format: [ { "Name": "...", "Value": "..." }, ... ]
     """
-    return [{"Key": k, "Value": v} for k, v in arg_dict.items()]
+    return [{"Name": k, "Value": v} for k, v in arg_dict.items()]
 
 
 def get_value_from_dict(data_dict: Dict[str, Any], path: List[str]) -> Mapping:

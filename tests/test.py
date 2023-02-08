@@ -48,9 +48,9 @@ class TestHelpers:
                 "key_3": "1",
             }
         ) == [
-            {"Key": "key_1", "Value": "v"},
-            {"Key": "key_2", "Value": "vv"},
-            {"Key": "key_3", "Value": "1"},
+            {"Name": "key_1", "Value": "v"},
+            {"Name": "key_2", "Value": "vv"},
+            {"Name": "key_3", "Value": "1"},
         ]
 
     def test_get_value_from_dict(self):
