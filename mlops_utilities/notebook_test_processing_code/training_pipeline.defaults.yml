@@ -1,0 +1,17 @@
+pipeline:
+  default_bucket: ???
+  role: ???
+  cache_config:
+    enable_caching: True
+    expire_after: p1d
+  model_package_group_name: ???
+
+processing:
+  instance_count: 1
+  instance_type: ml.t3.medium
+  role: ${pipeline.role}
+  
+training:
+  instance_count: 1
+  instance_type: ml.m5.large
+  role: ${pipeline.role}
