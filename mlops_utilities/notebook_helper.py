@@ -62,14 +62,14 @@ def create_pipeline(pipeline_name: str, sm_session: Session, steps: list, pipeli
 def create_estimator(sm_session: Session, image_uri, role: str, nb_config_path: str, hyperparams_file: str = None):
     nb_config = load_nb_config(nb_config_path)
     if hyperparams_file:
-        with open(hyperparams_file) as json_file:
+        with open(hyperparams_file, encoding='utf-8') as json_file:
             hyperparams_dict = json.load(json_file)
 
     return Estimator(
         image_uri=image_uri,
         instance_type=nb_config.processing.instance_type,
         instance_count=nb_config.processing.instance_count,
-        base_job_name=f"notebook-train",
+        base_job_name="notebook-train",
         sagemaker_session=sm_session,
         role=role,
         hyperparameters=hyperparams_dict
