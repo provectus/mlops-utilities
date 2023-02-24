@@ -11,8 +11,7 @@ from sagemaker import ModelPackage, Predictor, Session
 from sagemaker.model_monitor import DataCaptureConfig
 from sagemaker.workflow.pipeline_context import PipelineSession
 
-import notebook_helper
-from mlops_utilities import helpers
+from mlops_utilities import helpers, notebook_helper
 
 logger = logging.getLogger(__name__)
 
@@ -146,7 +145,7 @@ def upsert_notebook_pipeline(
         config_yml_path=nb_yml_config,
         processing=True,
         notebook_path=notebook_path,
-        image_uri=None
+        image_uri=image_uri
     )
 
     pipeline = notebook_helper.create_pipeline(

@@ -1,3 +1,4 @@
+"""Jupyter notebook helper"""
 import json
 import os
 
