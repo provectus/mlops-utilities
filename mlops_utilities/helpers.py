@@ -12,6 +12,11 @@ from botocore.client import BaseClient  # type: ignore
 from omegaconf import OmegaConf, dictconfig
 
 # Sagemaker dependent methods
+from sagemaker import Session
+from sagemaker.workflow.pipeline import Pipeline
+
+from mlops_utilities.notebook_helper.processing_helper import ProcessingHelper
+from mlops_utilities.notebook_helper.training_helper import TrainingHelper
 
 logger = logging.getLogger(__name__)
 
@@ -270,3 +275,67 @@ def _generate_data_capture_config(
         ],  # both by default
         "CaptureContentTypeHeader": {"CsvContentTypes": ["text/csv"]},
     }
+
+
+def create_pipeline(pipeline_name: str, sm_session: Session, steps: list, pipeline_params: list) -> Pipeline:
+    """
+    Create pipeline using list of steps, generated as a result of compose_pipeline function
+    Args:
+        pipeline_name: pipeline name
+        sm_session: sagemaker session
+        steps: list of composed steps from jupyter notebook
+        pipeline_params: pipeline params
+
+    Returns:
+        sagemaker pipeline
+    """
+    return Pipeline(
+        name=pipeline_name,
+        parameters=pipeline_params,
+        steps=steps,
+        sagemaker_session=sm_session,
+    )
+
+
+def compose_pipeline(sm_session: Session, role: str, config_yml_path: str, processing_step_name: str = None,
+                     training_step_name: str = None, image_uri: str = None, notebook_path: str = None,
+                     hyperparams_file=None) -> list:
+    """
+    Compose list of pipeline steps.
+    To include processing/training step define processing/training_step_name, otherwise ignore ;)
+    Args:
+        sm_session: sagemaker session
+        role: role arn
+        config_yml_path: local path of notebook yml configs
+        processing_step_name: name of the processing step, IF none -> do not include processing step
+        training_step_name: name of the training step, IF none -> skip training step creation
+        image_uri: image uri of pushed image to sagemaker
+        notebook_path: local path of notebook yml configs
+        hyperparams_file: local path of hyperparameters file
+
+    Returns:
+        list of composed steps
+    """
+    pipeline_steps = []
+    if processing_step_name:
+        processing_step = ProcessingHelper(processing_step_name=processing_step_name,
+                                           sagemaker_session=sm_session,
+                                           notebook_path=notebook_path,
+                                           role=role,
+                                           nb_config_path=config_yml_path).create_processing_step()
+        pipeline_steps.append(processing_step)
+
+    if training_step_name:
+        training_step = TrainingHelper(train_step_name=training_step_name,
+                                       sagemaker_session=sm_session,
+                                       image_uri=image_uri,
+                                       input_data_uri=f's3://{sm_session.default_bucket()}/abalone_data/train',
+                                       validation_data_uri=f's3://{sm_session.default_bucket()}/abalone_data/test',
+                                       role=role,
+                                       nb_config_path=config_yml_path,
+                                       hyperparams_file=hyperparams_file).create_training_step()
+
+        pipeline_steps.append(training_step)
+
+    return pipeline_steps
+

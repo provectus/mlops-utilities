@@ -11,7 +11,7 @@ from sagemaker import ModelPackage, Predictor, Session
 from sagemaker.model_monitor import DataCaptureConfig
 from sagemaker.workflow.pipeline_context import PipelineSession
 
-from mlops_utilities import helpers, notebook_helper
+from mlops_utilities import helpers
 
 logger = logging.getLogger(__name__)
 
@@ -139,16 +139,16 @@ def upsert_notebook_pipeline(
 
     sm_session = Session(default_bucket='kris-mlops-utilities-test')
 
-    pipeline_steps = notebook_helper.compose_pipeline(
+    pipeline_steps = helpers.compose_pipeline(
         sm_session=sm_session,
         role=role,
         config_yml_path=nb_yml_config,
-        processing=True,
+        processing_step_name='ProcessingStep',
         notebook_path=notebook_path,
         image_uri=image_uri
     )
 
-    pipeline = notebook_helper.create_pipeline(
+    pipeline = helpers.create_pipeline(
         pipeline_name=pipeline_name,
         sm_session=sm_session,
         steps=pipeline_steps,

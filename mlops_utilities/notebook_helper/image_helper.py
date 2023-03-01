@@ -27,24 +27,30 @@ class ImageHelper:
         """
             assign tag to local image, usually looks like that <account_id>.dkr.ecr.<region>.amazonaws.com/<img>:<img>
         """
-        self._run_shell_cmd(cmd=f"docker tag {self.img_name} "
-                                f"{self.account_id}.dkr.ecr.us-east-1.amazonaws.com/{self.img_name}:{self.img_name}",
-                            error_msg=f'Failed to tag local image')
+        tagged_img = f'{self.account_id}.dkr.ecr.{self.region}.amazonaws.com/{self.img_name}:{self.img_name}'
+        self._run_shell_cmd(cmd=f"docker tag {self.img_name} {tagged_img}", error_msg=f'Failed to tag local image')
+        return tagged_img
 
-    def create_repository(self):
+    def crate_ecr_repository(self):
         """
-            login to ecr repository or create if not exists
+            create ecr repository
+        """
+        self._run_shell_cmd(cmd=f"aws ecr create-repository --repository-name {self.img_name}",
+                            error_msg='Failed to create ecr repository')
+
+    def login_ecr_repository(self):
+        """
+            login to ecr repository
         """
         self._run_shell_cmd(cmd=f"aws ecr get-login-password --region {self.region} | docker login --username AWS --password-stdin "
                             f"{self.account_id}.dkr.ecr.{self.region}.amazonaws.com/{self.img_name}",
-                            error_msg='Failed to create or login to repository')
+                            error_msg='Failed to login ecr repository')
 
-    def push_docker_image(self):
+    def push_docker_image(self, tagged_img):
         """
             push docker image to ecr
         """
-        self._run_shell_cmd(cmd=f"docker push {self.account_id}.dkr.ecr.{self.region}.amazonaws.com/{self.img_name}:{self.img_name}",
-                            error_msg='Failed to push local image to ecr')
+        self._run_shell_cmd(cmd=f"docker push {tagged_img}", error_msg='Failed to push local image to ecr')
 
     def create_sagemaker_image(self):
         """
@@ -52,6 +58,10 @@ class ImageHelper:
         """
         self._run_shell_cmd(cmd=f"aws sagemaker create-image --image-name {self.img_name} --role-arn {self.role}",
                             error_msg='Failed to create sagemaker image')
+
+    def create_sagemaker_image_version(self, tagged_img):
+        self._run_shell_cmd(cmd=f"aws sagemaker create-image-version --base-image {tagged_img}"
+                                f" --image-name {self.img_name}", error_msg='Failed to create image version')
 
 
 class ImageHelperError(Exception):
