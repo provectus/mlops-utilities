@@ -118,6 +118,48 @@ def run_pipeline(
     return sagemaker_client.start_pipeline_execution(**start_pipe_args)
 
 
+def upsert_notebook_pipeline(
+        pipeline_name: str,
+        notebook_path: str,
+        role: str,
+        nb_yml_config: str,
+        pipeline_tags: Optional[Dict[str, str]] = None,
+        image_uri: Optional[str] = None,
+        dryrun: bool = False,
+):
+    """
+    Local file will be uploaded to S3 using default bucket (configured)
+    Args:
+        notebook_path: local path to *.ipynb file
+        pipeline_name: see existing `upsert_pipeline` method
+        image_uri: ECR image URI that is built and pushed by the project CI
+        pipeline_tags: see existing `upsert_pipeline` method
+        dryrun: see existing `upsert_pipeline` method
+    """
+
+    sm_session = Session(default_bucket='kris-mlops-utilities-test')
+
+    pipeline_steps = helpers.compose_pipeline(
+        sm_session=sm_session,
+        role=role,
+        config_yml_path=nb_yml_config,
+        processing_step_name='ProcessingStep',
+        notebook_path=notebook_path,
+        image_uri=image_uri
+    )
+
+    pipeline = helpers.create_pipeline(
+        pipeline_name=pipeline_name,
+        sm_session=sm_session,
+        steps=pipeline_steps,
+        pipeline_params=[]
+    )
+    if not dryrun:
+        if pipeline_tags is not None:
+            pipeline_tags = helpers.convert_param_dict_to_key_value_list(pipeline_tags)
+        pipeline.upsert(role_arn=role, tags=pipeline_tags)
+
+
 def deploy_model(
     sagemaker_session: Session,
     model_package_group_name: str,
